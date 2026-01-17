@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    ports:
+      - "5432:5432"
+    networks:
+      - dev
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+
+volumes:
+  db-data:
+    driver: local
+
+
+networks:
+  dev:
+    driver: bridge
