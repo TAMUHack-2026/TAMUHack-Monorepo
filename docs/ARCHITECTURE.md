@@ -28,18 +28,18 @@ flowchart TD
 
 ## Tech Stack
 * Frontend:
-  * Mobile App: React Native (TypeScript)
+  * Mobile App: React Native (TypeScript) with Gluestack UI for components
   * Spirometer: Arduino Uno (MicroPython)
 * Backend:
   * API: Spring Boot (Java)
   * Authentication: Spring Security JWT (Java)
-  * Database: PostgreSQL
+  * Database: PostgreSQL (local for development, Supabase for production)
   * Model Server: Spring Boot (Java) with PyTorch (Python) and Redis for caching
     * **NOTE**: Redis may not be necessary depending on performance and time
 * Deployment:
   * Docker
   * Kubernetes
-  * AWS or Azure (Decision TBD)
+  * Google Cloud Platform (GCP)
   * gRPC for communication between services
 * Build Tools:
   * Maven for Java projects
