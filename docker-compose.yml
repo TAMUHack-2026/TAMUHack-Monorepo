@@ -10,7 +10,7 @@ services:
   
   auth:
     build:
-      context: ./auth
+      context: ./backend/auth
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
@@ -21,7 +21,7 @@ services:
 
   model:
     build:
-      context: ./model
+      context: ./backend/model
       dockerfile: Dockerfile
     ports:
       - "8090:8090"
