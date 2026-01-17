@@ -7,6 +7,28 @@ services:
       - dev
     volumes:
       - db-data:/var/lib/postgresql/data
+  
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - dev
+    depends_on:
+      - postgres
+
+  model:
+    build:
+      context: ./model
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    networks:
+      - dev
+    depends_on:
+      - postgres
 
 
 volumes:
