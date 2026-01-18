@@ -1,6 +1,6 @@
 .PHONY: all up postgres gateway model services build clean stop 
 
-all: up build
+all: build up
 
 up: 
 	docker compose up -d
