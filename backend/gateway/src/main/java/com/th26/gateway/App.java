@@ -1,4 +1,4 @@
-package com.th26.auth;
+package com.th26.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

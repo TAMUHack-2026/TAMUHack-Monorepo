@@ -24,6 +24,7 @@
     </dependencies>
 
     <build>
+        <finalName>${artifactId}-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

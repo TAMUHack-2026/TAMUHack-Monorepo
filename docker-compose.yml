@@ -10,7 +10,7 @@ services:
   
   auth:
     build:
-      context: ./backend/auth
+      context: ./backend/gateway
       dockerfile: Dockerfile
     ports:
       - "8080:8080"

@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.th26.auth</groupId>
-  <artifactId>auth</artifactId>
+  <groupId>com.th26.gateway</groupId>
+  <artifactId>gateway</artifactId>
   <version>0.0.1</version>
 
     <properties>
@@ -28,6 +28,7 @@
     </dependencies>
 
     <build>
+        <finalName>${artifactId}-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
