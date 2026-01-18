@@ -1,4 +1,4 @@
-.PHONY: start up postgres gateway model services build clean stop 
+.PHONY: all up postgres gateway model services build clean stop 
 
 all: up build
 

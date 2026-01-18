@@ -19,7 +19,7 @@ Eventually, we plan to deploy the backend services to a Kubernetes cluster.
 
 To start the entire backend, run:
 ```bash
-make start 
+make # This can also be run as `make all` 
 ```
 
 To build all backend services without starting them, use:
