@@ -10,7 +10,7 @@ services:
   
   gateway:
     build:
-      context: ./backend/gateway
+      context: ./gateway
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
@@ -21,7 +21,7 @@ services:
 
   model:
     build:
-      context: ./backend/model
+      context: ./model
       dockerfile: Dockerfile
     ports:
       - "8090:8090"
