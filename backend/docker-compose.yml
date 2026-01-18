@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    ports:
+      - "5432:5432"
+    networks:
+      - dev
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - dev
+    depends_on:
+      - postgres
+
+  model:
+    build:
+      context: ./model
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    networks:
+      - dev
+    depends_on:
+      - postgres
+
+
+volumes:
+  db-data:
+    driver: local
+
+
+networks:
+  dev:
+    driver: bridge
