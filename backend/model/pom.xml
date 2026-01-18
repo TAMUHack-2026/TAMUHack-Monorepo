@@ -4,6 +4,7 @@
     <groupId>com.th26.model</groupId>
     <artifactId>model</artifactId>
     <version>0.0.1</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
