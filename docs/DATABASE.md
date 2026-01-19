@@ -24,7 +24,7 @@ The database is simple and is structured with the following tables (values are n
     * `age` (must be between 0 and 150)
     * `sex` (must be either 'male' or 'female' and is case-sensitive, so applications should normalize input)
     * `gender_identity` (optional)
-    * `height_in` (4 digits with 2-decimal precision)
+    * `height_in` (4 digits with 2-decimal precision, positive)
     * `weight_lbs` (5 digits with 2-decimal precision, positive)
 
 Both tables share the same primary key `id`,
