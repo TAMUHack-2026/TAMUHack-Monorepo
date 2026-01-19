@@ -66,6 +66,90 @@ paths:
           description: Internal server error
         '503':
           description: Service unavailable
+    
+  /users/{email}:
+    get:
+      summary: Retrieve user information
+      description: Retrieve information for a user by their email address.
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: The email address of the user to retrieve.
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request - invalid email format
+        '401':
+          description: Unauthorized - authentication failed
+        '404':
+          description: Not found - user does not exist
+        '500':
+          description: Internal server error
+        '503':
+          description: Service unavailable
+    delete:
+      summary: Delete a user
+      description: Delete a user from the database by their email address.
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: The email address of the user to delete.
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: User deleted successfully
+        '400':
+          description: Bad request - invalid email format
+        '401':
+          description: Unauthorized - authentication failed
+        '404':
+          description: Not found - user does not exist
+        '500':
+          description: Internal server error
+        '503':
+          description: Service unavailable
+
+  /profile/{email}:
+    get:
+      summary: Retrieve user medical profile information
+      description: Retrieve medical profile information for a user by their email address.
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: The email address of the user whose profile to retrieve.
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: User medical profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Bad request - invalid email format
+        '401':
+          description: Unauthorized - authentication failed
+        '404':
+          description: Not found - user does not exist
+        '500':
+          description: Internal server error
+        '503':
+          description: Service unavailable
 
 
 components:
@@ -110,3 +194,41 @@ components:
           minimum: 0
           description: The user's weight in pounds.
 
+    Profile:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: The user's first name.
+        last_name:
+          type: string
+          description: The user's last name.
+        age:
+          type: integer
+          description: The user's age.
+          minimum: 0
+          maximum: 150
+        sex:
+          type: string
+          description: The user's sex assigned at birth.
+          enum: ['male', 'female']
+        gender_identity:
+          type: string
+          description: The user's gender identity.
+        height_in:
+          type: number
+          format: float
+          minimum: 0
+          description: The user's height in inches.
+        weight_lbs:
+          type: number
+          format: float
+          minimum: 0
+          description: The user's weight in pounds.
+      required:
+        - first_name
+        - last_name
+        - age
+        - sex
+        - height_in
+        - weight_lbs
