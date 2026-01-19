@@ -6,8 +6,9 @@
 flowchart TD
     subgraph api["API"]
         gateway[API Gateway]
+        user_management[User Management API]
         db[(Database)]
-        model[Model Server]
+        model[Model Server API]
     end
     
     subgraph frontend["Frontend"]
@@ -19,11 +20,12 @@ flowchart TD
 
     app -->|API Requests| gateway
     gateway -->|JWT Tokens| app
-    gateway -->|Queries/Updates| db
+    gateway -->|Queries/Updates| user_management
     gateway -->|Sends Data| model
-    model -->|Retrieves Profile Data| db
+    model -->|Retrieves Profile Data| user_management
     model -->|Sends Predictions| gateway
     gateway -->|Sends Responses| app
+    user_management -->|Reads/Writes| db
 
 ```
 

@@ -6,6 +6,7 @@ services:
     networks:
       - dev
     volumes:
+      - ./supabase/migrations:/docker-entrypoint-initdb.d
       - db-data:/var/lib/postgresql/data
   
   gateway:
