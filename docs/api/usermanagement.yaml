@@ -1,0 +1,112 @@
+openapi: 3.1.0
+info:
+  title: User Management API
+  version: 0.0.1
+servers:
+  - url: http://localhost:8070/usermanagement/api
+    description: Local development server
+
+
+paths:
+  /user:
+    post:
+      summary: Create a new user
+      description: Create a new user in the database.
+      requestBody:
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    required:
+                      - email
+                      - password
+                      - first_name
+                      - last_name
+                      - age
+                      - sex
+                      - height_in
+                      - weight_lbs
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Bad request - invalid input
+        '409':
+          description: Conflict - user already exists
+        '500':
+          description: Internal server error
+        '503':
+          description: Service unavailable
+        '507':
+          description: Insufficient storage
+    put:
+      summary: Update an existing user
+      description: Update an existing user's information in the database.
+      requestBody:
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    required:
+                      - email
+      responses:
+        '200':
+          description: User updated successfully
+        '400':
+          description: Bad request - invalid input
+        '401':
+          description: Unauthorized - authentication failed
+        '404':
+          description: Not found - user does not exist
+        '500':
+          description: Internal server error
+        '503':
+          description: Service unavailable
+
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The user's email address.
+        password:
+          type: string
+          format: password
+          description: The user's password, hashed for security.
+        first_name:
+          type: string
+          description: The user's first name.
+        last_name:
+          type: string
+          description: The user's last name.
+        age:
+          type: integer
+          description: The user's age.
+          minimum: 0
+          maximum: 150
+        sex:
+          type: string
+          description: The user's sex assigned at birth.
+          enum: ['male', 'female']
+        gender_identity:
+          type: string
+          description: The user's gender identity.
+        height_in:
+          type: number
+          format: float
+          minimum: 0
+          description: The user's height in inches.
+        weight_lbs:
+          type: number
+          format: float
+          minimum: 0
+          description: The user's weight in pounds.
+
