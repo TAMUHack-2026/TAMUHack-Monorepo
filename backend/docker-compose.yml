@@ -20,6 +20,17 @@ services:
     depends_on:
       - postgres
 
+  usermanagement:
+    build:
+      context: ./usermanagement
+      dockerfile: Dockerfile
+    ports:
+      - "8070:8070"
+    networks:
+      - dev
+    depends_on:
+      - postgres
+
   model:
     build:
       context: ./model
