@@ -28,6 +28,7 @@ services:
 build:
 	@for file in ../docs/api/*.yaml; do \
 		name=$$(basename "$$file" .yaml); \
+		mkdir -p "./$$name/src/main/resources/static" > /dev/null 2>&1; \
 		cp "$$file" "./$$name/src/main/resources/static/openapi.yaml" > /dev/null 2>&1; \
 	done
 	docker compose build
