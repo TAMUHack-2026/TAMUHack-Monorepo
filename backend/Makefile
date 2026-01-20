@@ -25,7 +25,7 @@ services:
 	@echo "make model          - Start Model service"
 
 build:
-	for file in ../docs/api/*.yaml; do \
+	@for file in ../docs/api/*.yaml; do \
 		name=$$(basename "$$file" .yaml); \
 		cp "$$file" "./$$name/src/main/resources/static/openapi.yaml" > /dev/null 2>&1; \
 	done
