@@ -5,34 +5,38 @@
 ```mermaid
 flowchart TD
     subgraph api["API"]
-        auth[Authentication]
+        gateway[API Gateway]
+        user_management[User Management API]
         db[(Database)]
-        model[Model Server]
-        
-        auth --"Sends profile data to"--> db
-        model --"Queries for profile data"--> db
-        db --"Returns profile data to"--> model
+        model[Model Server API]
     end
     
     subgraph frontend["Frontend"]
         spirometer[Spirometer]
         app[Mobile App]
-        
-        spirometer --"Sends breath data to"--> app
+
+        spirometer -->|Sends Breath Data| app
     end
-    
-    app --"Sends profile data on registration"--> auth
-    app --"Calls when breath data is received"--> model
-    model --"Returns analysis results to"--> app
+
+    app -->|API Requests| gateway
+    gateway -->|JWT Tokens| app
+    gateway -->|Queries/Updates| user_management
+    gateway -->|Sends Data| model
+    model -->|Retrieves Profile Data| user_management
+    model -->|Sends Predictions| gateway
+    gateway -->|Sends Responses| app
+    user_management -->|Reads/Writes| db
+
 ```
 
 ## Tech Stack
+
 * Frontend:
   * Mobile App: React Native (TypeScript) with Gluestack UI for components
   * Spirometer: Arduino Uno (MicroPython)
 * Backend:
   * API: Spring Boot (Java)
-  * Authentication: Spring Security JWT (Java)
+  * API Gateway: Spring Security JWT (Java)
   * Database: PostgreSQL (local for development, Supabase for production)
   * Model Server: Spring Boot (Java) with PyTorch (Python) and Redis for caching
     * **NOTE**: Redis may not be necessary depending on performance and time
