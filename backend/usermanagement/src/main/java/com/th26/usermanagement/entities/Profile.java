@@ -63,6 +63,14 @@ public class Profile {
         return this.id;
     }
 
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public String getFirstName() {
         return this.firstName;
     }
