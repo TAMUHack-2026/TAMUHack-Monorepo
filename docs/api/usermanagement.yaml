@@ -41,7 +41,7 @@ paths:
           description: Service unavailable
         '507':
           description: Insufficient storage
-    put:
+    patch:
       summary: Update an existing user
       description: Update an existing user's information in the database.
       requestBody:
