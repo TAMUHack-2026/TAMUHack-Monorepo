@@ -8,27 +8,6 @@ servers:
 
 
 paths:
-  /login:
-    post:
-      summary: User login
-      description: Authenticate a user and initiate a session.
-      requestBody:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Login'
-      responses:
-        '200':
-          description: Login successful
-        '400':
-          description: Bad request - invalid input
-        '401':
-          description: Unauthorized - authentication failed
-        '500':
-          description: Internal server error
-        '503':
-          description: Service unavailable
-
   /user:
     post:
       summary: Create a new user
@@ -89,34 +68,6 @@ paths:
           description: Service unavailable
     
   /user/{email}:
-    get:
-      summary: Retrieve user information
-      description: Retrieve information for a user by their email address.
-      parameters:
-        - name: email
-          in: path
-          required: true
-          description: The email address of the user to retrieve.
-          schema:
-            type: string
-            format: email
-      responses:
-        '200':
-          description: User retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Bad request - invalid email format
-        '401':
-          description: Unauthorized - authentication failed
-        '404':
-          description: Not found - user does not exist
-        '500':
-          description: Internal server error
-        '503':
-          description: Service unavailable
     delete:
       summary: Delete a user
       description: Delete a user from the database by their email address.
@@ -137,6 +88,27 @@ paths:
           description: Unauthorized - authentication failed
         '404':
           description: Not found - user does not exist
+        '500':
+          description: Internal server error
+        '503':
+          description: Service unavailable
+
+  /user/login:
+    post:
+      summary: User login
+      description: Authenticate a user and initiate a session.
+      requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login successful
+        '400':
+          description: Bad request - invalid input
+        '401':
+          description: Unauthorized - authentication failed
         '500':
           description: Internal server error
         '503':
@@ -175,21 +147,6 @@ paths:
 
 components:
   schemas:
-    Login:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          description: The user's email address.
-        password:
-          type: string
-          format: password
-          description: The user's password.
-      required:
-        - email
-        - password
-
     User:
       type: object
       properties:
