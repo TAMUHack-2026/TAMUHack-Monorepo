@@ -19,6 +19,9 @@ public class UserRequest {
     private String email;
 
     @NotBlank(groups=CreateValidation.class)
+    private String password;
+
+    @NotBlank(groups=CreateValidation.class)
     @JsonProperty("first_name")
     private String firstName;
     
