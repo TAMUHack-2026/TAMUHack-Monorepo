@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = this.userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
             // TODO: Throw with proper exception
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Profile getProfileByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = this.userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             // TODO: Throw with proper exception
             return null;
