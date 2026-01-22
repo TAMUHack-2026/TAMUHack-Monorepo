@@ -10,6 +10,8 @@ import com.th26.usermanagement.repositories.UserRepository;
 import com.th26.usermanagement.repositories.ProfileRepository;
 import com.th26.usermanagement.dtos.requests.UserRequest;
 import com.th26.usermanagement.dtos.requests.LoginRequest;
+import com.th26.usermanagement.exceptions.UserExistsException;
+import com.th26.usermanagement.exceptions.UserNotFoundException;
 
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -23,7 +25,11 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     @Transactional
-    public void createUser(UserRequest request) {
+    public void createUser(UserRequest request) throws UserExistsException {
+        if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserExistsException("Conflict - User already exists");
+        }
+
         Profile newUserProfile = Profile.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -45,11 +51,9 @@ public class LoginServiceImpl implements LoginService {
     @Override
     @Transactional
     public void updateUser(UserRequest request) {
-        User toUpdate = this.userRepository.findByEmail(request.getEmail()).orElse(null);
-        if (toUpdate == null) {
-            // TODO: Throw with proper exception
-            return;
-        }
+        User toUpdate = this.userRepository.findByEmail(request.getEmail()).orElseThrow(() -> 
+            new UserNotFoundException("Not found - user does not exist")
+        );
 
         Profile toUpdateProfile = toUpdate.getProfile();
 
@@ -81,13 +85,10 @@ public class LoginServiceImpl implements LoginService {
     @Override
     @Transactional
     public void deleteUserByEmail(String email) {
-        User toDelete = this.userRepository.findByEmail(email).orElse(null);
-        if (toDelete != null) {
-            this.userRepository.delete(toDelete);
-        } else {
-            // TODO: Throw with proper exception
-            return;
-        }
+        User toDelete = this.userRepository.findByEmail(email).orElseThrow(() -> 
+            new UserNotFoundException("Not found - user does not exist")
+        );
+        this.userRepository.delete(toDelete);
     }
 
     @Override
@@ -95,8 +96,7 @@ public class LoginServiceImpl implements LoginService {
     public boolean validateCredentials(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
         if (user == null) {
-            // TODO: Throw with proper exception
-            return false;
+            throw new UserNotFoundException("Not found - user does not exist");
         }
         return user.getPasswordHash().equals(request.getPassword());
     }
