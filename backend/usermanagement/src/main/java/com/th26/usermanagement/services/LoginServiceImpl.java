@@ -1,21 +1,15 @@
 package com.th26.usermanagement.services;
 
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.th26.usermanagement.entities.User;
 import com.th26.usermanagement.entities.Profile;
 import com.th26.usermanagement.repositories.UserRepository;
 import com.th26.usermanagement.repositories.ProfileRepository;
 import com.th26.usermanagement.dtos.requests.UserRequest;
 import com.th26.usermanagement.dtos.requests.LoginRequest;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-interface LoginService {
-    void createUser(UserRequest request);
-    void updateUser(UserRequest request);
-    void deleteUserByEmail(String email);
-    boolean validateCredentials(LoginRequest request);
-}
 
 @Service
 public class LoginServiceImpl implements LoginService {
