@@ -10,23 +10,12 @@ services:
       - db-data:/var/lib/postgresql/data
     env_file: ".env"
   
-  gateway:
-    build:
-      context: ./gateway
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    networks:
-      - dev
-    depends_on:
-      - postgres
-
   usermanagement:
     build:
       context: ./usermanagement
       dockerfile: Dockerfile
     ports:
-      - "8070:8070"
+      - "8080:8080"
     networks:
       - dev
     env_file: ".env"
