@@ -8,6 +8,7 @@ import com.th26.usermanagement.dtos.requests.UserRequest;
 import com.th26.usermanagement.dtos.requests.LoginRequest;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 interface LoginService {
     void createUser(UserRequest request);
@@ -27,6 +28,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    @Transactional
     public void createUser(UserRequest request) {
         Profile newUserProfile = Profile.builder()
                 .firstName(request.getFirstName())
@@ -47,6 +49,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    @Transactional
     public void updateUser(UserRequest request) {
         User toUpdate = this.userRepository.findByEmail(request.getEmail()).orElse(null);
         if (toUpdate == null) {
@@ -82,6 +85,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    @Transactional
     public void deleteUserByEmail(String email) {
         User toDelete = this.userRepository.findByEmail(email).orElse(null);
         if (toDelete != null) {
@@ -93,6 +97,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean validateCredentials(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
         if (user == null) {

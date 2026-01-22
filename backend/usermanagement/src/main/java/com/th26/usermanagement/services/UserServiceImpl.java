@@ -5,6 +5,7 @@ import com.th26.usermanagement.entities.Profile;
 import com.th26.usermanagement.repositories.UserRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 interface UserService {
     User getUserByEmail(String email);
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         User user = this.userRepository.findByEmail(email).orElse(null);
 
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Profile getProfileByEmail(String email) {
         User user = this.userRepository.findByEmail(email).orElse(null);
         if (user == null) {
