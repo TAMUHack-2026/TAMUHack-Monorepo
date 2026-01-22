@@ -8,6 +8,31 @@ servers:
 
 
 paths:
+  /login:
+    post:
+      summary: User login
+      description: Authenticate a user and initiate a session.
+      requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                - $ref: '#/components/schemas/AuthToken'
+        '400':
+          description: Bad request - invalid input
+        '401':
+          description: Unauthorized - authentication failed
+        '500':
+          description: Internal server error
+        '503':
+          description: Service unavailable
+
   /user:
     post:
       summary: Create a new user
@@ -44,6 +69,8 @@ paths:
     patch:
       summary: Update an existing user
       description: Update an existing user's information in the database.
+      security:
+        - BearerAuth: []
       requestBody:
           content:
             application/json:
@@ -67,10 +94,12 @@ paths:
         '503':
           description: Service unavailable
     
-  /users/{email}:
+  /user/{email}:
     get:
       summary: Retrieve user information
       description: Retrieve information for a user by their email address.
+      security:
+        - BearerAuth: []
       parameters:
         - name: email
           in: path
@@ -99,6 +128,8 @@ paths:
     delete:
       summary: Delete a user
       description: Delete a user from the database by their email address.
+      security:
+        - BearerAuth: []
       parameters:
         - name: email
           in: path
@@ -125,6 +156,8 @@ paths:
     get:
       summary: Retrieve user medical profile information
       description: Retrieve medical profile information for a user by their email address.
+      security:
+        - BearerAuth: []
       parameters:
         - name: email
           in: path
@@ -154,6 +187,28 @@ paths:
 
 components:
   schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The user's email address.
+        password:
+          type: string
+          format: password
+          description: The user's password.
+      required:
+        - email
+        - password
+
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT authentication token.
+
     User:
       type: object
       properties:
@@ -232,3 +287,11 @@ components:
         - sex
         - height_in
         - weight_lbs
+
+
+securitySchemes:
+  BearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
+    description: JSON Web Token (JWT) based authentication.
