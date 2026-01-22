@@ -6,7 +6,7 @@ services:
     networks:
       - dev
     volumes:
-      - ./supabase/migrations:/docker-entrypoint-initdb.d
+      - ./postgres:/docker-entrypoint-initdb.d
       - db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: devdb
