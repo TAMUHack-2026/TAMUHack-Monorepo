@@ -7,8 +7,7 @@ as well as how to run the backend and frontend code.
 
 * `backend/`: Contains the backend code, which is a microservices architecture built with Spring Boot.
   * `model/`: Contains the API for interacting with the PyTorch model, and the Dockerfile for building the model service.
-  * `gateway/`: Contains the API Gateway code, which routes requests to the appropriate microservices and handles authentication.
-  * `usermanagement/`: Contains the API for interacting with the PostgreSQL database for user management.
+  * `usermanagement/`: Contains the API for interacting with the PostgreSQL database for user management and authentication.
   * `supabase/migrations/`: Contains the PostgreSQL database schema. The folder is named like this to reduce friction when migrating to Supabase.
 * `frontend/`: Contains the frontend code, built with React Native and Expo.
 * `docs/`: Contains documentation related to the project.
@@ -49,7 +48,6 @@ make <service-name>
 Replace `<service-name>` with one of the following:
 
 * `postgres`: Starts the PostgreSQL database service.
-* `gateway`: Starts the API Gateway service.
 * `usermanagement`: Starts the User Management service.
 * `model`: Starts the model service.
 

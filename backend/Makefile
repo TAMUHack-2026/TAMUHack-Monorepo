@@ -1,4 +1,4 @@
-.PHONY: all up postgres gateway usermanagement model services build clean stop 
+.PHONY: all up postgres usermanagement model services build clean stop 
 
 all: build up
 
@@ -7,9 +7,6 @@ up:
 
 postgres: build
 	docker compose up -d postgres
-
-gateway: build
-	docker compose up -d gateway
 
 usermanagement: build
 	docker compose up -d usermanagement
@@ -20,7 +17,6 @@ model: build
 services:
 	@echo "Available services to start:"
 	@echo "make postgres       - Start PostgreSQL service"
-	@echo "make gateway        - Start API Gateway service"
 	@echo "make usermanagement - Start User Management service"
 	@echo "make model          - Start Model service"
 
