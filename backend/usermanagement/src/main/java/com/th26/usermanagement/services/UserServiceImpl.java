@@ -1,6 +1,7 @@
 package com.th26.usermanagement.services;
 
 import com.th26.usermanagement.entities.User;
+import com.th26.usermanagement.exceptions.UserNotFoundException;
 import com.th26.usermanagement.entities.Profile;
 import com.th26.usermanagement.dtos.responses.ProfileResponse;
 import com.th26.usermanagement.repositories.UserRepository;
@@ -19,11 +20,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public ProfileResponse getProfileByEmail(String email) {
-        User user = this.userRepository.findByEmail(email).orElse(null);
-        if (user == null) {
-            // TODO: Throw with proper exception
-            return null;
-        }
+        User user = this.userRepository.findByEmail(email).orElseThrow(() -> 
+            new UserNotFoundException("Not found - user does not exist")
+        );
 
         Profile profile = user.getProfile();
         ProfileResponse response = ProfileResponse.builder()
