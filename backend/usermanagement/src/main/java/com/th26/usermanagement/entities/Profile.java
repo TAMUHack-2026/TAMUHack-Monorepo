@@ -13,10 +13,21 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Pattern;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 import java.util.UUID;
 import java.math.BigDecimal;
 
 @Entity
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "profiles")
 public class Profile {
     @Id
@@ -56,86 +67,4 @@ public class Profile {
     @Column(name = "weight_lbs", nullable = false, precision = 5, scale = 2)
     @NotBlank
     private BigDecimal weight;
-
-    public Profile() {}
-
-    public UUID getId() {
-        return this.id;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getFirstName() {
-        return this.firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return this.lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public short getAge() {
-        return this.age;
-    }
-
-    public void setAge(short age) throws IllegalArgumentException {
-        if (age < 0 || age > 150) {
-            throw new IllegalArgumentException("Age must be between 0 and 150");
-        }
-        this.age = age;
-    }
-
-    public String getSex() {
-        return this.sex;
-    }
-    
-    public void setSex(String sex) throws IllegalArgumentException {
-        if (sex == null || !(sex.equals("male") || sex.equals("female")) ) {
-            throw new IllegalArgumentException("Sex must be either 'male' or 'female'");
-        }
-        this.sex = sex;
-    }
-
-    public String getGenderIdentity() {
-        return this.genderIdentity;
-    }
-
-    public void setGenderIdentity(String genderIdentity) {
-        this.genderIdentity = genderIdentity;
-    }
-
-    public BigDecimal getHeight() {
-        return this.height;
-    }
-
-    public void setHeight(BigDecimal height) throws IllegalArgumentException {
-        if (height.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Height must be a positive value");
-        }
-        this.height = height;
-    }
-
-    public BigDecimal getWeight() {
-        return this.weight;
-    }
-
-    public void setWeight(BigDecimal weight) throws IllegalArgumentException {
-        if (weight.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Weight must be a positive value");
-        }
-        this.weight = weight;
-    }
 }
