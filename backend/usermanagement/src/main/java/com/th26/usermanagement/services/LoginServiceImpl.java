@@ -5,13 +5,15 @@ import com.th26.usermanagement.entities.Profile;
 import com.th26.usermanagement.repositories.UserRepository;
 import com.th26.usermanagement.repositories.ProfileRepository;
 import com.th26.usermanagement.dtos.requests.UserRequest;
+import com.th26.usermanagement.dtos.requests.LoginRequest;
 
 import org.springframework.stereotype.Service;
 
 interface LoginService {
     void createUser(UserRequest request);
     void updateUser(UserRequest request);
-    boolean deleteUserByEmail(String email);
+    void deleteUserByEmail(String email);
+    boolean validateCredentials(LoginRequest request);
 }
 
 @Service
@@ -40,13 +42,13 @@ public class LoginServiceImpl implements LoginService {
                 .passwordHash(request.getPassword())
                 .profile(newUserProfile)
                 .build();
-        userRepository.save(newUser);
-        profileRepository.save(newUserProfile);
+        this.userRepository.save(newUser);
+        this.profileRepository.save(newUserProfile);
     }
 
     @Override
     public void updateUser(UserRequest request) {
-        User toUpdate = userRepository.findByEmail(request.getEmail()).orElse(null);
+        User toUpdate = this.userRepository.findByEmail(request.getEmail()).orElse(null);
         if (toUpdate == null) {
             // TODO: Throw with proper exception
             return;
@@ -76,16 +78,27 @@ public class LoginServiceImpl implements LoginService {
             toUpdateProfile.setWeight(request.getWeight());
         }
         
-        profileRepository.save(toUpdateProfile);
+        this.profileRepository.save(toUpdateProfile);
     }
 
     @Override
-    public boolean deleteUserByEmail(String email) {
-        User toDelete = userRepository.findByEmail(email).orElse(null);
+    public void deleteUserByEmail(String email) {
+        User toDelete = this.userRepository.findByEmail(email).orElse(null);
         if (toDelete != null) {
-            userRepository.delete(toDelete);
-            return true;
+            this.userRepository.delete(toDelete);
+        } else {
+            // TODO: Throw with proper exception
+            return;
         }
-        return false;
+    }
+
+    @Override
+    public boolean validateCredentials(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        if (user == null) {
+            // TODO: Throw with proper exception
+            return false;
+        }
+        return user.getPasswordHash().equals(request.getPassword());
     }
 }
