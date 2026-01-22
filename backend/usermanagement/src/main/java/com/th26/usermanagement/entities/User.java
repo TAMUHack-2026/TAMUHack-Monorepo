@@ -10,13 +10,24 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.UUID;
 
 @Entity
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
@@ -35,39 +46,10 @@ public class User {
     @NotBlank
     private String passwordHash;
 
-    public User() {}
-
-    public UUID getId() {
-        return this.id;
-    }
-
-    public Profile getProfile() {
-        return this.profile;
-    }
-
     public void setProfile(Profile profile) {
         this.profile = profile;
         if (profile != null) {
             profile.setUser(this);
         }
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(String email) throws IllegalArgumentException {
-        if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$")) {
-            throw new IllegalArgumentException("Invalid email format");
-        }
-        this.email = email;
-    }
-
-    public String getPasswordHash() {
-        return this.passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
     }
 }
