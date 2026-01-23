@@ -16,18 +16,18 @@ import com.th26.usermanagement.dtos.requests.CreateValidation;
 import com.th26.usermanagement.dtos.requests.UserRequest;
 
 @RestController
-@RequestMapping("usermanagement/api/user")
+@RequestMapping("/usermanagement/api/user")
 public class UserController {
     @Autowired
     private LoginService loginService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<String> createUser(@Validated(CreateValidation.class) @RequestBody UserRequest request) {
         loginService.createUser(request);
         return ResponseEntity.ok("User created successfully");
     }
 
-    @PatchMapping("/")
+    @PatchMapping
     public ResponseEntity<String> updateUser(@RequestBody UserRequest request) {
         loginService.updateUser(request);
         return ResponseEntity.ok("User updated successfully");
