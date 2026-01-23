@@ -1,6 +1,7 @@
 package com.th26.usermanagement.dtos.requests;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Min;
@@ -29,7 +30,7 @@ public class UserRequest {
     @JsonProperty("last_name")
     private String lastName;
     
-    @NotBlank(groups=CreateValidation.class)
+    @NotNull(groups=CreateValidation.class)
     @Min(0)
     @Max(150)
     private Short age;
@@ -41,11 +42,11 @@ public class UserRequest {
     @JsonProperty("gender_identity")
     private String genderIdentity;
 
-    @NotBlank(groups=CreateValidation.class)
+    @NotNull(groups=CreateValidation.class)
     @JsonProperty("height_in")
     private BigDecimal height;
 
-    @NotBlank(groups=CreateValidation.class)
+    @NotNull(groups=CreateValidation.class)
     @JsonProperty("weight_lbs")
     private BigDecimal weight;
 }

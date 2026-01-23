@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,7 +28,7 @@ public class ProfileResponse {
     @JsonProperty("last_name")
     private String lastName;
 
-    @NotBlank
+    @NotNull
     @Min(0)
     @Max(150)
     private Short age;
@@ -39,11 +40,11 @@ public class ProfileResponse {
     @JsonProperty("gender_identity")
     private String genderIdentity;
 
-    @NotBlank
+    @NotNull
     @JsonProperty("height_in")
     private BigDecimal height;
 
-    @NotBlank
+    @NotNull
     @JsonProperty("weight_lbs")
     private BigDecimal weight;
 }
