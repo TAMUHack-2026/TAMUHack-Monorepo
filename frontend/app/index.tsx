@@ -46,7 +46,7 @@ export default function LoginScreen() {
 
             <Button
               borderRadius="$xl"
-              onPress={() => router.replace("/dashboard" as any)}
+              onPress={() => router.replace("/dashboard")}
             >
               <ButtonText>Login</ButtonText>
             </Button>
