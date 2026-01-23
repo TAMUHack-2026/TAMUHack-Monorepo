@@ -36,4 +36,10 @@ Services should ***NEVER*** query the database directly.
 Instead, all database interactions should be done through the User Management API,
 which provides endpoints for creating, reading, updating, and deleting user and profile data.
 
-***Documentation for the User Management API has NOT been made yet.***
+## User Management API
+
+> Instructions for how to run the User Management API, as well as other backend services can be found in the repository [README.md](../README.md) file.
+
+The User Management API is a RESTFul API built using Spring Boot.
+This API is used to interact with the PostgreSQL database for all user-related operations.
+To view the documentation for the API, as well as test endpoints, run the backend service and navigate to [http://localhost:8080/swagger-ui.html`](http://localhost:8080/swagger-ui.html).
