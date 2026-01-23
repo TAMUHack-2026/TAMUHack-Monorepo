@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProfileResponse getProfileByEmail(String email) {
+    public ProfileResponse getProfileByEmail(String email) throws UserNotFoundException {
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> 
             new UserNotFoundException("Not found - user does not exist")
         );
