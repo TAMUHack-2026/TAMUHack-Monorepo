@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Column;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Pattern;
@@ -47,10 +48,10 @@ public class Profile {
     private String lastName;
 
     @Column(nullable = false)
-    @NotBlank
+    @NotNull
     @Min(0)
     @Max(150)
-    private short age;
+    private Short age;
 
     @Column(nullable = false)
     @NotBlank
@@ -61,10 +62,10 @@ public class Profile {
     private String genderIdentity;
 
     @Column(name = "height_in", nullable = false, precision = 4, scale = 2)
-    @NotBlank
+    @NotNull
     private BigDecimal height;
 
     @Column(name = "weight_lbs", nullable = false, precision = 5, scale = 2)
-    @NotBlank
+    @NotNull
     private BigDecimal weight;
 }
