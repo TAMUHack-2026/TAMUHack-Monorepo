@@ -33,7 +33,7 @@ public class ModelController {
         this.restClient = RestClient.create(modelEndpoint);
     }
 
-    @PostMapping("/{email}")
+    @PostMapping("/{email:.+}")
     public ResponseEntity<String> queryModel(
         @PathVariable("email") 
         @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$", flags = Pattern.Flag.CASE_INSENSITIVE) 
