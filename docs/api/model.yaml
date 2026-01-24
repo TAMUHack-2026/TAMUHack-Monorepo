@@ -76,8 +76,7 @@ components:
           items:
             type: number
             format: float
-            minimum: 0
-            exclusiveMinimum: true
+            exclusiveMinimum: 0
       required:
         - height_in
         - weight_lbs
