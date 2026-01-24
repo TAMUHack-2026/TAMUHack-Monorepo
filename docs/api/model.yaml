@@ -3,7 +3,7 @@ info:
   title: Model API
   version: 0.0.1
 servers:
-  - url: http://localhost:8080/model/api
+  - url: http://localhost:8090/model/api
     description: Local development server
 
 
