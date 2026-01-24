@@ -31,7 +31,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"user"})
 @Table(name = "profiles")
 public class Profile {
     @Id
