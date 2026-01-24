@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 
 @Data
 public class UserRequest {
-    @NotBlank
+    @NotBlank(groups={CreateValidation.class, UpdateValidation.class})
     @Email(groups={CreateValidation.class, UpdateValidation.class}, regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$", flags = Pattern.Flag.CASE_INSENSITIVE)
     private String email;
 
@@ -32,12 +32,12 @@ public class UserRequest {
     private String lastName;
     
     @NotNull(groups=CreateValidation.class)
-    @Min(0)
-    @Max(150)
+    @Min(value=0, groups={CreateValidation.class, UpdateValidation.class})
+    @Max(value=150, groups={CreateValidation.class, UpdateValidation.class})
     private Short age;
 
     @NotBlank(groups=CreateValidation.class)
-    @Pattern(groups=CreateValidation.class, regexp = "^(male|female)$")
+    @Pattern(groups={CreateValidation.class, UpdateValidation.class}, regexp = "^(male|female)$")
     private String sex;
 
     @JsonProperty("gender_identity")
