@@ -185,6 +185,7 @@ components:
           type: integer
           description: The user's age.
           minimum: 0
+          exclusiveMinimum: true
           maximum: 150
         sex:
           type: string
@@ -197,11 +198,13 @@ components:
           type: number
           format: float
           minimum: 0
+          exclusiveMinimum: true
           description: The user's height in inches.
         weight_lbs:
           type: number
           format: float
           minimum: 0
+          exclusiveMinimum: true
           description: The user's weight in pounds.
 
     Profile:
@@ -217,6 +220,7 @@ components:
           type: integer
           description: The user's age.
           minimum: 0
+          exclusiveMinimum: true
           maximum: 150
         sex:
           type: string
@@ -229,11 +233,13 @@ components:
           type: number
           format: float
           minimum: 0
+          exclusiveMinimum: true
           description: The user's height in inches.
         weight_lbs:
           type: number
           format: float
           minimum: 0
+          exclusiveMinimum: true
           description: The user's weight in pounds.
       required:
         - first_name
