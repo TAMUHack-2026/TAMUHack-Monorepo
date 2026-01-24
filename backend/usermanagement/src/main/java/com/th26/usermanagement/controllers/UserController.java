@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.th26.usermanagement.services.LoginService;
 import com.th26.usermanagement.dtos.requests.CreateValidation;
+import com.th26.usermanagement.dtos.requests.UpdateValidation;
 import com.th26.usermanagement.dtos.requests.UserRequest;
 
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @PatchMapping
-    public ResponseEntity<String> updateUser(@RequestBody UserRequest request) {
+    public ResponseEntity<String> updateUser(@Validated(UpdateValidation.class) @RequestBody UserRequest request) {
         loginService.updateUser(request);
         return ResponseEntity.ok("User updated successfully");
     }
