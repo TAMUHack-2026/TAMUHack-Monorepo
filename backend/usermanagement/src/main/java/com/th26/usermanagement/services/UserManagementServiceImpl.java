@@ -16,11 +16,11 @@ import com.th26.usermanagement.exceptions.UserNotFoundException;
 import java.util.UUID;
 
 @Service
-public class LoginServiceImpl implements LoginService {
+public class UserManagementServiceImpl implements UserManagementService {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
 
-    public LoginServiceImpl(UserRepository userRepository, ProfileRepository profileRepository) {
+    public UserManagementServiceImpl(UserRepository userRepository, ProfileRepository profileRepository) {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
     }
@@ -102,7 +102,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     @Transactional(readOnly = true)
     public boolean validateCredentials(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        User user = this.userRepository.findByEmail(request.getEmail()).orElse(null);
         if (user == null) {
             throw new UserNotFoundException("Not found - user does not exist");
         }
