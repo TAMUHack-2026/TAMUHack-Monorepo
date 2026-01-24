@@ -45,11 +45,11 @@ public class UserRequest {
 
     @NotNull(groups=CreateValidation.class)
     @JsonProperty("height_in")
-    @DecimalMin(value="0.0", inclusive = false)
+    @DecimalMin(value="0.0", inclusive = false, groups={CreateValidation.class, UpdateValidation.class})
     private BigDecimal height;
 
     @NotNull(groups=CreateValidation.class)
     @JsonProperty("weight_lbs")
-    @DecimalMin(value="0.0", inclusive = false)
+    @DecimalMin(value="0.0", inclusive = false, groups={CreateValidation.class, UpdateValidation.class})
     private BigDecimal weight;
 }
