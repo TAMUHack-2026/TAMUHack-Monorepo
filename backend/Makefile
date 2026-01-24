@@ -21,11 +21,10 @@ services:
 	@echo "make model          - Start Model service"
 
 build:
-	@for file in ../docs/api/*.yaml; do \
-		name=$$(basename "$$file" .yaml); \
-		mkdir -p "./$$name/src/main/resources/static" > /dev/null 2>&1; \
-		cp "$$file" "./$$name/src/main/resources/static/openapi.yaml" > /dev/null 2>&1; \
-	done
+	mkdir -p ./usermanagement/src/main/resources/static
+	mkdir -p ./model/static
+	cp ../docs/api/usermanagement.yaml ./usermanagement/src/main/resources/static/openapi.yaml
+	cp ../docs/api/model.yaml ./model/static/openapi.yaml
 	docker compose build
 
 clean:

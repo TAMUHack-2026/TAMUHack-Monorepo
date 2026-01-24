@@ -42,4 +42,16 @@ which provides endpoints for creating, reading, updating, and deleting user and 
 
 The User Management API is a RESTful API built using Spring Boot.
 This API is used to interact with the PostgreSQL database for all user-related operations.
+This API is also a gateway to the Model API for making inference calls to the machine learning model.
 To view the documentation for the API, as well as test endpoints, run the backend service and navigate to [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html).
+
+## Model API
+
+> Instructions for how to run the Model API, as well as other backend services can be found in the repository [README.md](../README.md) file.
+
+The Model API is a RESTful API built using FastAPI.
+This API is used to make inference calls to the machine learning model.
+To view the documentation for the API, as well as test endpoints, run the backend service and navigate to [http://localhost:8090/swagger-ui.html](http://localhost:8090/swagger-ui.html).
+
+The model API will **NEVER** be called from the frontend directly. It is **ONLY** called from the User Management API.
+Inference requests are sent first to the User Management API, which then forwards the request to the Model API.
