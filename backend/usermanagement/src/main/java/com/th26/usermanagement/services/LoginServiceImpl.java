@@ -42,8 +42,12 @@ public class LoginServiceImpl implements LoginService {
         User newUser = User.builder()
                 .email(request.getEmail())
                 .passwordHash(request.getPassword())
-                .profile(newUserProfile)
                 .build();
+
+        // Since the Lombok builder doesn't call custom setters,
+        // the profile-user relationship must be set manually.
+        newUser.setProfile(newUserProfile);
+
         this.userRepository.save(newUser);
         this.profileRepository.save(newUserProfile);
     }
