@@ -2,6 +2,7 @@ package com.th26.usermanagement.dtos.responses;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -42,9 +43,11 @@ public class ProfileResponse {
 
     @NotNull
     @JsonProperty("height_in")
+    @DecimalMin(value="0.0", inclusive = false)
     private BigDecimal height;
 
     @NotNull
     @JsonProperty("weight_lbs")
+    @DecimalMin(value="0.0", inclusive = false)
     private BigDecimal weight;
 }
