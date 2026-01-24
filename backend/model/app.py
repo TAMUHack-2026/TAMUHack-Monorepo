@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Response
+from fastapi import FastAPI, APIRouter, Response, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.openapi.docs import get_swagger_ui_html
@@ -26,19 +26,26 @@ async def ping():
 @api_router.post("/predict")
 async def predict(input_data: ModelInput):
     # Placeholder for prediction
-    result = infer(
-            input_data.height_in,
-            input_data.weight_lbs,
-            input_data.sex,
-            input_data.breath_data
-    )
+    try:
+        result = infer(
+                input_data.height_in,
+                input_data.weight_lbs,
+                input_data.sex,
+                input_data.breath_data
+        )
+    except Exception:
+        raise HTTPException(status_code=500, detail="Model inference failed")
+
     return Response(content=result, media_type="text/plain")
 
 
 @app.get("/openapi.yaml", include_in_schema=False)
 async def get_openapi_yaml():
-    with open("static/openapi.yaml", "r") as f:
-        return Response(content=f.read(), media_type="text/yaml")
+    try:
+        with open("static/openapi.yaml", "r") as f:
+            return Response(content=f.read(), media_type="text/yaml")
+    except FileNotFoundError:
+        raise HTTPException(status_code=501, detail="OpenAPI specification not present")
 
 
 @app.get("/swagger-ui.html", include_in_schema=False)

@@ -26,8 +26,8 @@ paths:
               schema:
                 type: string
                 example: "Asthma"
-        '400':
-          description: Bad request
+        '422':
+          description: Unprocessable entity
         '500':
           description: Internal server error
         '503':
