@@ -26,12 +26,13 @@ async def ping():
 @api_router.post("/predict")
 async def predict(input_data: ModelInput):
     # Placeholder for prediction
-    return infer(
+    result = infer(
             input_data.height_in,
             input_data.weight_lbs,
             input_data.sex,
             input_data.breath_data
     )
+    return Response(content=result, media_type="text/plain")
 
 
 @app.get("/openapi.yaml", include_in_schema=False)
