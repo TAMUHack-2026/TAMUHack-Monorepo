@@ -145,6 +145,25 @@ paths:
         '503':
           description: Service unavailable
 
+    /predict/{email}:
+      post:
+        summary: Send user email and breath data for prediction
+        description: Gateway endpoint that forwards user data to the Model API for prediction.
+        parameters:
+          - name: email
+            in: path
+            required: true
+            description: The email address of the user.
+            schema:
+              type: string
+              format: email
+        requestBody:
+          required: true
+          content:
+              type: application/json
+              schema:
+                $ref: "#/components/schemas/BreathData"
+
 
 components:
   schemas:
@@ -222,3 +241,11 @@ components:
         - sex
         - height_in
         - weight_lbs
+
+    BreathData:
+      type: array
+      minItems: 1
+      items:
+        type: number
+        format: float
+        exclusiveMinimum: 0
