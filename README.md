@@ -8,7 +8,7 @@ as well as how to run the backend and frontend code.
 * `backend/`: Contains the backend code, which is a microservices architecture built with Spring Boot.
   * `model/`: Contains the API for interacting with the PyTorch model, and the Dockerfile for building the model service.
   * `usermanagement/`: Contains the API for interacting with the PostgreSQL database for user management and authentication.
-  * `supabase/migrations/`: Contains the PostgreSQL database schema. The folder is named like this to reduce friction when migrating to Supabase.
+  * `postgres/schema.sql`: Contains the PostgreSQL database schema.
 * `frontend/`: Contains the frontend code, built with React Native and Expo.
 * `docs/`: Contains documentation related to the project.
 
