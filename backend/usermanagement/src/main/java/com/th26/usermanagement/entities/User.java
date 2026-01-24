@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 import java.util.UUID;
 
@@ -28,6 +29,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "passwordHash")
 @Table(name = "users")
 public class User {
     @Id
