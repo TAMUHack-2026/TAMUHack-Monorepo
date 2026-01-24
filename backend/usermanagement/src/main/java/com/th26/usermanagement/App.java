@@ -1,4 +1,4 @@
-package com.th26.gateway;
+package com.th26.usermanagement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-.PHONY: all up postgres gateway model services build clean stop 
+.PHONY: all up postgres usermanagement model services build clean down
 
 all: build up
 
@@ -8,19 +8,24 @@ up:
 postgres: build
 	docker compose up -d postgres
 
-gateway: build
-	docker compose up -d gateway
+usermanagement: build
+	docker compose up -d usermanagement
 
 model: build
 	docker compose up -d model
 
 services:
 	@echo "Available services to start:"
-	@echo "make postgres   - Start PostgreSQL service"
-	@echo "make gateway    - Start API Gateway service"
-	@echo "make model      - Start Model service"
+	@echo "make postgres       - Start PostgreSQL service"
+	@echo "make usermanagement - Start User Management service"
+	@echo "make model          - Start Model service"
 
 build:
+	@for file in ../docs/api/*.yaml; do \
+		name=$$(basename "$$file" .yaml); \
+		mkdir -p "./$$name/src/main/resources/static" > /dev/null 2>&1; \
+		cp "$$file" "./$$name/src/main/resources/static/openapi.yaml" > /dev/null 2>&1; \
+	done
 	docker compose build
 
 clean:

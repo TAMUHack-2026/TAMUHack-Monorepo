@@ -6,12 +6,16 @@ services:
     networks:
       - dev
     volumes:
-      - ./supabase/migrations:/docker-entrypoint-initdb.d
+      - ./postgres:/docker-entrypoint-initdb.d
       - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: devdb
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
   
-  gateway:
+  usermanagement:
     build:
-      context: ./gateway
+      context: ./usermanagement
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
