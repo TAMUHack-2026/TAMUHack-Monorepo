@@ -73,6 +73,7 @@ components:
         breath_data:
           type: array
           description: List of breath measurements
+          minItems: 1
           items:
             type: number
             format: float
