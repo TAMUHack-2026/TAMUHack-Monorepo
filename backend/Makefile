@@ -1,4 +1,4 @@
-.PHONY: all up postgres usermanagement model services build clean stop 
+.PHONY: all up postgres usermanagement model services build clean down
 
 all: build up
 
