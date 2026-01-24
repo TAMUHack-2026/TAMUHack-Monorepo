@@ -1,7 +1,6 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import Response
 from fastapi.openapi.docs import get_swagger_ui_html
 from dtos import ModelInput
 from mlmodel import infer
@@ -21,7 +20,7 @@ app.add_middleware(
 
 @api_router.get("/ping")
 async def ping():
-    return "pong"
+    return Response(content="pong", media_type="text/plain")
 
 
 @api_router.post("/predict")
