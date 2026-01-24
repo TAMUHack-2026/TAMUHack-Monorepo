@@ -164,7 +164,7 @@ components:
         age:
           type: integer
           description: The user's age.
-          exclusiveMinimum: 0
+          minimum: 0
           maximum: 150
         sex:
           type: string
@@ -196,7 +196,7 @@ components:
         age:
           type: integer
           description: The user's age.
-          exclusiveMinimum: 0
+          minimum: 0
           maximum: 150
         sex:
           type: string
