@@ -5,8 +5,10 @@ import com.th26.usermanagement.dtos.requests.LoginRequest;
 import com.th26.usermanagement.exceptions.UserExistsException;
 import com.th26.usermanagement.exceptions.UserNotFoundException;
 
+import java.util.UUID;
+
 public interface LoginService {
-    void createUser(UserRequest request) throws UserExistsException;
+    UUID createUser(UserRequest request) throws UserExistsException;
     void updateUser(UserRequest request) throws UserNotFoundException;
     void deleteUserByEmail(String email) throws UserNotFoundException;
     boolean validateCredentials(LoginRequest request);
