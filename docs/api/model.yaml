@@ -36,7 +36,7 @@ paths:
   /ping:
     get:
       summary: Test endpoint for service availability
-      description: A simple endpoint to check if the user management service is running.
+      description: A simple endpoint to check if the Model API service is running.
       responses:
         '200':
           description: Service is running
