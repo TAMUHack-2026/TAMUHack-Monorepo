@@ -11,6 +11,7 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Pattern;
 
@@ -63,9 +64,11 @@ public class Profile {
 
     @Column(name = "height_in", nullable = false, precision = 4, scale = 2)
     @NotNull
+    @DecimalMin(value="0.0", inclusive = false)
     private BigDecimal height;
 
     @Column(name = "weight_lbs", nullable = false, precision = 5, scale = 2)
     @NotNull
+    @DecimalMin(value="0.0", inclusive = false)
     private BigDecimal weight;
 }

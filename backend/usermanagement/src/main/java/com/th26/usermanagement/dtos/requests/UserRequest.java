@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,9 +45,11 @@ public class UserRequest {
 
     @NotNull(groups=CreateValidation.class)
     @JsonProperty("height_in")
+    @DecimalMin(value="0.0", inclusive = false)
     private BigDecimal height;
 
     @NotNull(groups=CreateValidation.class)
     @JsonProperty("weight_lbs")
+    @DecimalMin(value="0.0", inclusive = false)
     private BigDecimal weight;
 }
