@@ -53,5 +53,5 @@ The Model API is a RESTful API built using FastAPI.
 This API is used to make inference calls to the machine learning model.
 To view the documentation for the API, as well as test endpoints, run the backend service and navigate to [http://localhost:8090/swagger-ui.html](http://localhost:8090/docs).
 
-The model API will **NEVER** be called from the frontned directly. It is **ONLY** called from the User Management API.
+The model API will **NEVER** be called from the frontend directly. It is **ONLY** called from the User Management API.
 Inference requests are sent first to the User Management API, which then forwards the request to the Model API.
