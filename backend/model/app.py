@@ -45,7 +45,7 @@ async def get_openapi_yaml():
         with open("static/openapi.yaml", "r") as f:
             return Response(content=f.read(), media_type="text/yaml")
     except FileNotFoundError:
-        raise HTTPException(status_code=501, detail="OpenAPI specification not present")
+        raise HTTPException(status_code=404, detail="OpenAPI specification not present")
 
 
 @app.get("/swagger-ui.html", include_in_schema=False)
