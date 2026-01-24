@@ -40,6 +40,6 @@ which provides endpoints for creating, reading, updating, and deleting user and 
 
 > Instructions for how to run the User Management API, as well as other backend services can be found in the repository [README.md](../README.md) file.
 
-The User Management API is a RESTFul API built using Spring Boot.
+The User Management API is a RESTful API built using Spring Boot.
 This API is used to interact with the PostgreSQL database for all user-related operations.
-To view the documentation for the API, as well as test endpoints, run the backend service and navigate to [http://localhost:8080/swagger-ui.html`](http://localhost:8080/swagger-ui.html).
+To view the documentation for the API, as well as test endpoints, run the backend service and navigate to [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html).
