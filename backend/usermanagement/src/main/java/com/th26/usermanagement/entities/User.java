@@ -29,7 +29,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "passwordHash")
+@ToString(exclude = {"passwordHash", "profile"})
 @Table(name = "users")
 public class User {
     @Id
