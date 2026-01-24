@@ -18,9 +18,8 @@ flowchart TD
     end
 
     app -->|API Requests| user_management
-    user_management -->|JWT Tokens| app
+    user_management -->|Authentication| app
     user_management -->|Sends Data| model
-    model -->|Retrieves Profile Data| user_management
     model -->|Sends Predictions| user_management
     user_management -->|Sends Responses| app
     user_management -->|Queries/Updates| db
@@ -34,15 +33,14 @@ flowchart TD
   * Spirometer: Arduino Uno (MicroPython)
 * Backend:
   * API: Spring Boot (Java)
-  * User Management: Spring Security with JWT for authentication + Spring Boot REST API
-  * Database: PostgreSQL (local for development, Supabase for production)
-  * Model Server: Spring Boot (Java) with PyTorch (Python) and Redis for caching
-    * **NOTE**: Redis may not be necessary depending on performance and time
+  * User Management: Spring Security with authentication + Spring Boot REST API
+  * Database: PostgreSQL
+  * Model Server: FastAPI (Python) with PyTorch (Python) and Redis for caching
 * Deployment:
   * Docker
-  * Kubernetes
-  * Google Cloud Platform (GCP)
-  * gRPC for communication between services
+  * Docker Compose
+  * Cloudflare Tunnel
+  * JSON for communication between services
 * Build Tools:
   * Maven for Java projects
   * npm for React Native project
