@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import Response
 from fastapi.openapi.docs import get_swagger_ui_html
 from dtos import ModelInput
+from mlmodel import infer
 import uvicorn
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
@@ -26,7 +27,12 @@ async def ping():
 @api_router.post("/predict")
 async def predict(input_data: ModelInput):
     # Placeholder for prediction
-    return "Prediction result"
+    return infer(
+            input_data.height_in,
+            input_data.weight_lbs,
+            input_data.sex,
+            input_data.breath_data
+    )
 
 
 @app.get("/openapi.yaml", include_in_schema=False)
