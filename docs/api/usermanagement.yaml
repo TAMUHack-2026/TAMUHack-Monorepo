@@ -38,9 +38,9 @@ paths:
                   - type: object
                     properties:
                       password:
-                      type: string
-                      format: password
-                      description: The user's password.
+                        type: string
+                        format: password
+                        description: The user's password.
                     required:
                       - email
                       - password
@@ -164,8 +164,7 @@ components:
         age:
           type: integer
           description: The user's age.
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           maximum: 150
         sex:
           type: string
@@ -177,14 +176,12 @@ components:
         height_in:
           type: number
           format: float
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           description: The user's height in inches.
         weight_lbs:
           type: number
           format: float
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           description: The user's weight in pounds.
 
     Profile:
@@ -199,8 +196,7 @@ components:
         age:
           type: integer
           description: The user's age.
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           maximum: 150
         sex:
           type: string
@@ -212,14 +208,12 @@ components:
         height_in:
           type: number
           format: float
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           description: The user's height in inches.
         weight_lbs:
           type: number
           format: float
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           description: The user's weight in pounds.
       required:
         - first_name
