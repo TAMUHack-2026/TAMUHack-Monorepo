@@ -12,6 +12,7 @@ gateway: build
 	docker compose up -d gateway
 
 model: build
+	cp ../docs/api/model.yaml ./model/static/model.yaml
 	docker compose up -d model
 
 services:

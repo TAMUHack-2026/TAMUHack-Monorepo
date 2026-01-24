@@ -1,0 +1,59 @@
+openapi: 3.1.0
+info:
+  title: Model API
+  version: 0.0.1
+servers:
+  - url: http://localhost:8080/model/api
+    description: Local development server
+
+paths:
+  /predict:
+    post:
+      summary: Send user metrics and breath data
+      description: Mock endpoint that receives height, weight, sex, and breath data, and returns a confirmation string.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                height_in:
+                  type: number
+                  format: float
+                  minimum: 0
+                  exclusiveMinimum: true
+                  description: User height in inches (must be > 0)
+                weight_lbs:
+                  type: number
+                  format: float
+                  minimum: 0
+                  exclusiveMinimum: true
+                  description: User weight in pounds (must be > 0)
+                sex:
+                  type: string
+                  enum: ['male', 'female']
+                  description: Sex assigned at birth
+                breath_data:
+                  type: array
+                  items:
+                    type: number
+                    format: float
+                    minimum: 0
+                    exclusiveMinimum: true
+                  description: List of breath measurements as floats (each must be > 0)
+              required:
+                - height_in
+                - weight_lbs
+                - sex
+                - breath_data
+      responses:
+        '200':
+          description: Data received successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Data received"
+        '500':
+          description: Internal server error

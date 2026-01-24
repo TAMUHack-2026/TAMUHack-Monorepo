@@ -1,10 +1,13 @@
-FROM eclipse-temurin:25
+FROM python:3.12-slim
 
 WORKDIR /app
-COPY . .
-RUN apt-get update && apt-get install -y maven python3 python3-pip
-RUN pip3 install -r requirements.txt --break-system-packages
 
-RUN mvn package
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app.py .
+COPY static/model.yaml .
+
 EXPOSE 8090
-ENTRYPOINT ["java", "-jar", "target/model-service.jar"]
+
+ENTRYPOINT ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8090"]
