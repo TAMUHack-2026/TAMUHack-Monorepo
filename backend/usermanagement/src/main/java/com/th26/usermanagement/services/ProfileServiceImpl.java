@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public ProfileServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

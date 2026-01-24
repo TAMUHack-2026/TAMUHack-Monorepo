@@ -7,7 +7,7 @@ import com.th26.usermanagement.exceptions.UserNotFoundException;
 
 import java.util.UUID;
 
-public interface LoginService {
+public interface UserManagementService {
     UUID createUser(UserRequest request) throws UserExistsException;
     void updateUser(UserRequest request) throws UserNotFoundException;
     void deleteUserByEmail(String email) throws UserNotFoundException;

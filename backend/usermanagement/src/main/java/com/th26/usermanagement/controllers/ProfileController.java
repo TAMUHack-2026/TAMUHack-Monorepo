@@ -12,17 +12,17 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 
 import com.th26.usermanagement.dtos.responses.ProfileResponse;
-import com.th26.usermanagement.services.UserService;
+import com.th26.usermanagement.services.ProfileService;
 
 @RestController
 @Validated
 @RequestMapping("/usermanagement/api/profile")
 public class ProfileController {
     @Autowired
-    private UserService userService;
+    private ProfileService profileService;
 
     @GetMapping("/{email}")
     public ResponseEntity<ProfileResponse> getProfileByEmail(@PathVariable("email") @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$", flags = Pattern.Flag.CASE_INSENSITIVE) String email) {
-        return ResponseEntity.ok(userService.getProfileByEmail(email));
+        return ResponseEntity.ok(profileService.getProfileByEmail(email));
     }
 }
