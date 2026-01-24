@@ -6,6 +6,7 @@ servers:
   - url: http://localhost:8080/model/api
     description: Local development server
 
+
 paths:
   /predict:
     post:
@@ -16,44 +17,51 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                height_in:
-                  type: number
-                  format: float
-                  minimum: 0
-                  exclusiveMinimum: true
-                  description: User height in inches (must be > 0)
-                weight_lbs:
-                  type: number
-                  format: float
-                  minimum: 0
-                  exclusiveMinimum: true
-                  description: User weight in pounds (must be > 0)
-                sex:
-                  type: string
-                  enum: ['male', 'female']
-                  description: Sex assigned at birth
-                breath_data:
-                  type: array
-                  items:
-                    type: number
-                    format: float
-                    minimum: 0
-                    exclusiveMinimum: true
-                  description: List of breath measurements as floats (each must be > 0)
-              required:
-                - height_in
-                - weight_lbs
-                - sex
-                - breath_data
+              $ref: '#/components/schemas/ModelInput'
       responses:
         '200':
-          description: Data received successfully
+          description: The diagnosis the model made for the user
           content:
             text/plain:
               schema:
                 type: string
-                example: "Data received"
+                example: "Asthma"
+        '400':
+          description: Bad request
         '500':
           description: Internal server error
+        '503':
+          description: Service unavailable
+
+components:
+  schemas:
+    ModelInput:
+      type: object
+      properties:
+        height_in:
+          type: number
+          format: float
+          exclusiveMinimum: 0
+          description: User height in inches
+        weight_lbs:
+          type: number
+          description: User weight in pounds
+          format: float
+          exclusiveMinimum: 0
+        sex:
+          type: string
+          enum: ['male', 'female']
+          description: Sex assigned at birth
+        breath_data:
+          type: array
+          description: List of breath measurements
+          items:
+            type: number
+            format: float
+            minimum: 0
+            exclusiveMinimum: true
+      required:
+        - height_in
+        - weight_lbs
+        - sex
+        - breath_data
