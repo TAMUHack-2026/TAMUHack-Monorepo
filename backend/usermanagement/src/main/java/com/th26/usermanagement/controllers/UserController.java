@@ -10,10 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.th26.usermanagement.services.LoginService;
 import com.th26.usermanagement.dtos.requests.CreateValidation;
 import com.th26.usermanagement.dtos.requests.UserRequest;
+
+import java.util.UUID;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/usermanagement/api/user")
@@ -23,8 +27,12 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<String> createUser(@Validated(CreateValidation.class) @RequestBody UserRequest request) {
-        loginService.createUser(request);
-        return ResponseEntity.ok("User created successfully");
+        UUID id = loginService.createUser(request);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+        return ResponseEntity.created(location).body(id.toString());
     }
 
     @PatchMapping

@@ -13,6 +13,8 @@ import com.th26.usermanagement.dtos.requests.LoginRequest;
 import com.th26.usermanagement.exceptions.UserExistsException;
 import com.th26.usermanagement.exceptions.UserNotFoundException;
 
+import java.util.UUID;
+
 @Service
 public class LoginServiceImpl implements LoginService {
     private final UserRepository userRepository;
@@ -25,7 +27,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     @Transactional
-    public void createUser(UserRequest request) throws UserExistsException {
+    public UUID createUser(UserRequest request) throws UserExistsException {
         if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new UserExistsException("Conflict - User already exists");
         }
@@ -48,8 +50,10 @@ public class LoginServiceImpl implements LoginService {
         // the profile-user relationship must be set manually.
         newUser.setProfile(newUserProfile);
 
-        this.userRepository.save(newUser);
+        User toReturn = this.userRepository.save(newUser);
         this.profileRepository.save(newUserProfile);
+
+        return toReturn.getId();
     }
 
     @Override
