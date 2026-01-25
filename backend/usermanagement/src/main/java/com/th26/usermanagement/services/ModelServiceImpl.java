@@ -2,9 +2,9 @@ package com.th26.usermanagement.services;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestClient;
 
 import com.th26.usermanagement.dtos.requests.ModelRerouteRequest;
@@ -32,21 +32,18 @@ public class ModelServiceImpl implements ModelService {
             .sex(userProfile.getSex())
             .breathData(inputData)
             .build();
+        
+        try {
+            ResponseEntity<String> response = this.restClient.post()
+                .uri("/predict")
+                .body(modelRequest)
+                .retrieve()
+                .toEntity(String.class);
 
-        ResponseEntity<String> response = this.restClient.post()
-            .uri("/predict")
-            .body(modelRequest)
-            .retrieve()
-            .toEntity(String.class);
-
-        if (response.getStatusCode() == HttpStatus.UNPROCESSABLE_CONTENT) {
-            throw new MethodArgumentNotValidException(null, null);
-        } else if (response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-            throw new GatewayException("Model service encountered an internal error");
-        } else if (response.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
-            throw new GatewayException("Model service is currently unavailable");
-        } else {
             return response;
+        } catch (RestClientResponseException e) {
+            throw new GatewayException("Error communicating with model service");
         }
+
     }
 }
