@@ -1,9 +1,10 @@
+// src/state/AppState.tsx
 import React, { createContext, useContext, useMemo, useState } from "react";
 
-export type SexValue = "Male" | "Female" | "Other" | "";
+export type SexValue = "Male" | "Female" | "";
 
 export type ProfileInfo = {
-  height: string; 
+  height: string;
   weight: string;
   age: string;
   sex: SexValue;
@@ -11,7 +12,7 @@ export type ProfileInfo = {
 
 export type RecordingRow = {
   id: string;
-  timestamp: string; 
+  timestamp: string;
   data: "N/A";
 };
 
@@ -22,7 +23,6 @@ type AppState = {
   rows: RecordingRow[];
   addRow: () => void;
 
-  isProfileComplete: boolean;
   clearProfile: () => void;
 };
 
@@ -38,12 +38,6 @@ const Ctx = createContext<AppState | null>(null);
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<ProfileInfo>(defaultProfile);
   const [rows, setRows] = useState<RecordingRow[]>([]);
-
-  const isProfileComplete =
-    profile.height.trim() !== "" &&
-    profile.weight.trim() !== "" &&
-    profile.age.trim() !== "" &&
-    profile.sex.trim() !== "";
 
   function addRow() {
     const now = new Date();
@@ -68,10 +62,9 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       setProfile,
       rows,
       addRow,
-      isProfileComplete,
       clearProfile,
     }),
-    [profile, rows, isProfileComplete]
+    [profile, rows]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
@@ -82,6 +75,3 @@ export function useAppState() {
   if (!v) throw new Error("useAppState must be used within AppStateProvider");
   return v;
 }
-
-
-

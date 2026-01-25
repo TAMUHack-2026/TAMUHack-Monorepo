@@ -1,6 +1,4 @@
-import React, { useMemo, useState } from "react";
-import { Alert, Pressable } from "react-native";
-import { router } from "expo-router";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -11,23 +9,16 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
-import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import RecordingPanel from "../src/components/RecordingPanel";
 import { useAppState } from "../src/state/AppState";
 
 export default function DashboardScreen() {
-  const { rows, addRow, isProfileComplete } = useAppState();
+  const { rows, addRow } = useAppState();
   const [recordingVisible, setRecordingVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
-  const badgeVisible = useMemo(() => !isProfileComplete, [isProfileComplete]);
-
   function startRecording() {
-    if (!isProfileComplete) {
-      Alert.alert("Missing Info", "Please enter your personal information first.");
-      return;
-    }
     setRecordingVisible(true);
   }
 
@@ -40,12 +31,17 @@ export default function DashboardScreen() {
     addRow();
   }
 
+  function onPairPress() {
+    // Placeholder for Bluetooth pairing flow (to be implemented later)
+    console.log("PAIR pressed (placeholder)");
+  }
+
   return (
     <Box flex={1} bg="$background0">
-      {/* Top bar */}
+      {/* Top bar (profile removed) */}
       <HStack
         px="$5"
-        pt={insets.top + 12} 
+        pt={insets.top + 12}
         pb="$4"
         alignItems="center"
         justifyContent="space-between"
@@ -53,45 +49,23 @@ export default function DashboardScreen() {
         borderBottomColor="$border200"
       >
         <Heading size="lg">Personal Dashboard</Heading>
-
-        <Pressable
-          onPress={() => router.push("/profile")}
-          style={{ padding: 8 }}
-          hitSlop={10}
-        >
-          <Box>
-            <Ionicons name="person-circle-outline" size={28} />
-            {badgeVisible && (
-              <Box
-                position="absolute"
-                top={-2}
-                right={-2}
-                w={12}
-                h={12}
-                borderRadius={999}
-                bg="$error600"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Text fontSize="$xs" color="$text0" lineHeight={12}>
-                  !
-                </Text>
-              </Box>
-            )}
-          </Box>
-        </Pressable>
       </HStack>
 
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
         <VStack space="lg">
           {/* Record button */}
+          <Button borderRadius="$2xl" size="xl" py="$6" onPress={startRecording}>
+            <ButtonText fontSize="$xl">Record</ButtonText>
+          </Button>
+
+          {/* Pair button (placeholder) */}
           <Button
             borderRadius="$2xl"
-            size="xl"
-            py="$6"
-            onPress={startRecording}
+            size="lg"
+            variant="outline"
+            onPress={onPairPress}
           >
-            <ButtonText fontSize="$xl">Record</ButtonText>
+            <ButtonText>Pair</ButtonText>
           </Button>
 
           {/* Table */}
@@ -154,5 +128,3 @@ export default function DashboardScreen() {
     </Box>
   );
 }
-
-
