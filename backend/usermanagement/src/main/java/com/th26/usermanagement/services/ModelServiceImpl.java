@@ -42,7 +42,7 @@ public class ModelServiceImpl implements ModelService {
         if (response.getStatusCode() == HttpStatus.UNPROCESSABLE_CONTENT) {
             throw new MethodArgumentNotValidException(null, null);
         } else if (response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-            throw new RuntimeException("Model service encountered an internal error");
+            throw new GatewayException("Model service encountered an internal error");
         } else if (response.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
             throw new GatewayException("Model service is currently unavailable");
         } else {
