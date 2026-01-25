@@ -4,6 +4,7 @@ all: build up
 
 up: 
 	docker compose up -d
+	it 8080 --subdomain mrbreathe
 
 postgres: build
 	docker compose up -d postgres
