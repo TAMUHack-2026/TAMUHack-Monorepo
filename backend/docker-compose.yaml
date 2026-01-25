@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    ports:
+      - "5432:5432"
+    networks:
+      - dev
+    volumes:
+      - ./postgres:/docker-entrypoint-initdb.d
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: devdb
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
+  
+  usermanagement:
+    build:
+      context: ./usermanagement
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - dev
+    depends_on:
+      - postgres
+      - model
+
+  model:
+    build:
+      context: ./model
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    networks:
+      - dev
+    depends_on:
+      - postgres
+
+
+volumes:
+  db-data:
+    driver: local
+
+
+networks:
+  dev:
+    driver: bridge

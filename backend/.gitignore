@@ -1,1 +1,4 @@
 **/target/*
+**/venv/**
+model/static/*
+**/src/main/resources/static/openapi.yaml

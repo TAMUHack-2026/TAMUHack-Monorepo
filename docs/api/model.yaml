@@ -1,0 +1,104 @@
+openapi: 3.1.0
+info:
+  title: Model API
+  version: 0.0.1
+servers:
+  - url: http://localhost:8090/model/api
+    description: Local development server
+
+
+paths:
+  /predict:
+    post:
+      summary: Send user metrics and breath data
+      description: Mock endpoint that receives height, weight, sex, and breath data, and returns a confirmation string.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelInput'
+      responses:
+        '200':
+          description: The diagnosis the model made for the user
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Asthma"
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /ping:
+    get:
+      summary: Test endpoint for service availability
+      description: A simple endpoint to check if the Model API service is running.
+      responses:
+        '200':
+          description: Service is running
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "pong"
+        '503':
+          description: Service unavailable
+
+
+components:
+  schemas:
+    ModelInput:
+      type: object
+      properties:
+        height_in:
+          type: number
+          format: float
+          exclusiveMinimum: 0
+          description: User height in inches
+        weight_lbs:
+          type: number
+          description: User weight in pounds
+          format: float
+          exclusiveMinimum: 0
+        sex:
+          type: string
+          enum: ['male', 'female']
+          description: Sex assigned at birth
+        breath_data:
+          type: array
+          description: List of breath measurements
+          minItems: 1
+          items:
+            type: number
+            format: float
+            exclusiveMinimum: 0
+      required:
+        - height_in
+        - weight_lbs
+        - sex
+        - breath_data
+
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: Error message detailing the cause of the error
+      required:
+        - detail
