@@ -266,4 +266,4 @@ components:
       items:
         type: number
         format: float
-        exclusiveMinimum: 0
+        minimum: 0
