@@ -2,7 +2,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { router } from "expo-router";
 import { KeyboardAvoidingView, Platform } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Box,
   Button,
@@ -27,6 +26,8 @@ import {
   VStack,
 } from "@gluestack-ui/themed";
 import { Ionicons } from "@expo/vector-icons";
+import { SexValue, useAppState } from "../src/state/AppState";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Sex = "male" | "female";
 
@@ -134,7 +135,10 @@ export default function CreateAccountScreen() {
     return e;
   }, [firstName, lastName, email, age, sex, heightIn, weightLbs]);
 
+
+
   const isValid = Object.keys(errors).length === 0;
+  const { saveProfile } = useAppState();
 
   async function submit() {
     if (!isValid) return;
@@ -160,6 +164,19 @@ export default function CreateAccountScreen() {
     };
 
     console.log("CREATE_ACCOUNT_PAYLOAD (MVP):", payload);
+
+    // Save to AppState and Backend
+    await saveProfile({
+      email: normalizedEmail,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      age,
+      sex: sex as SexValue, // Cast to match SexValue
+      height: heightIn,
+      weight: weightLbs,
+      genderIdentity: genderIdentity.trim(),
+    });
+
     router.replace("/dashboard");
   }
 

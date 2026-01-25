@@ -12,6 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import RecordingPanel from "../src/components/RecordingPanel";
 import { useAppState } from "../src/state/AppState";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function DashboardScreen() {
   const { rows, addRow } = useAppState();
@@ -19,6 +20,7 @@ export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
 
   function startRecording() {
+    AsyncStorage.clear();
     setRecordingVisible(true);
   }
 

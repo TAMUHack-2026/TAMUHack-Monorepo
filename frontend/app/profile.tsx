@@ -49,10 +49,11 @@ function normalizeTwoDecimals(v: string) {
 }
 
 export default function ProfileScreen() {
-  const { profile, setProfile, clearProfile } = useAppState();
+  const { profile, saveProfile, clearProfile } = useAppState();
   const insets = useSafeAreaInsets();
 
   // Local editable state
+  const [email, setEmail] = useState(profile.email);
   const [height, setHeight] = useState(profile.height);
   const [weight, setWeight] = useState(profile.weight);
   const [age, setAge] = useState(profile.age);
@@ -64,17 +65,18 @@ export default function ProfileScreen() {
   const isDirty = useMemo(() => {
     const init = initialRef.current;
     return (
+      norm(email) !== norm(init.email) ||
       norm(height) !== norm(init.height) ||
       norm(weight) !== norm(init.weight) ||
       norm(age) !== norm(init.age) ||
       norm(sex) !== norm(init.sex)
     );
-  }, [height, weight, age, sex]);
+  }, [email, height, weight, age, sex]);
 
   // Complete means "all filled" (only matters if dirty)
   const localComplete = useMemo(() => {
-    return norm(height) !== "" && norm(weight) !== "" && norm(age) !== "" && norm(sex) !== "";
-  }, [height, weight, age, sex]);
+    return norm(email) !== "" && norm(height) !== "" && norm(weight) !== "" && norm(age) !== "" && norm(sex) !== "";
+  }, [email, height, weight, age, sex]);
 
   // Validate with same constraints as Create Account (only matters if dirty)
   const errors = useMemo(() => {
@@ -82,6 +84,7 @@ export default function ProfileScreen() {
 
     const e: Record<string, string> = {};
 
+    if (!email.includes("@")) e.email = "Please enter a valid email.";
     if (!isValidAge(age)) e.age = "Age must be an integer between 0 and 150.";
     if (!isValidHeight(height))
       e.height = "Height must be positive with up to 4 digits and up to 2 decimals (e.g., 70.50).";
@@ -94,7 +97,7 @@ export default function ProfileScreen() {
     if (!localComplete) e.form = "Finish all fields before leaving or saving.";
 
     return e;
-  }, [isDirty, age, height, weight, sex, localComplete]);
+  }, [isDirty, email, age, height, weight, sex, localComplete]);
 
   const isValid = useMemo(() => {
     if (!isDirty) return true; // if they didn't edit, it's fine
@@ -119,51 +122,43 @@ export default function ProfileScreen() {
     return true;
   }
 
-  function tryLeave() {
+  async function tryLeave() {
     if (blockIfInvalid()) return;
 
     // If dirty and valid, auto-save before leaving
     if (isDirty) {
-      setProfile({
-        height: norm(height),
-        weight: norm(weight),
-        age: norm(age),
-        sex,
-      });
-      initialRef.current = {
-        height: norm(height),
-        weight: norm(weight),
-        age: norm(age),
-        sex,
-      };
+      await save(); // Reuse save logic
+      return;
     }
 
     router.back();
   }
 
-  function save() {
+  async function save() {
     if (blockIfInvalid()) return;
 
-    setProfile({
-      height: norm(height),
-      weight: norm(weight),
-      age: norm(age),
-      sex,
-    });
-
-    // Reset "dirty" baseline after save
-    initialRef.current = {
+    const newProfile = {
+      email: norm(email),
+      firstName: profile.firstName, // Maintain existing names
+      lastName: profile.lastName,
+      genderIdentity: profile.genderIdentity,
       height: norm(height),
       weight: norm(weight),
       age: norm(age),
       sex,
     };
 
+    await saveProfile(newProfile);
+
+    // Reset "dirty" baseline after save
+    initialRef.current = newProfile;
+
     router.back();
   }
 
   function clearAll() {
     clearProfile();
+    setEmail("");
     setHeight("");
     setWeight("");
     setAge("");
@@ -186,6 +181,24 @@ export default function ProfileScreen() {
       </HStack>
 
       <VStack space="md">
+        <Input
+          borderRadius="$xl"
+          isInvalid={isDirty && (!!errors.email || !!errors.form)}
+        >
+          <InputField
+            placeholder="Email Address"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </Input>
+        {isDirty && errors.email ? (
+          <Text mt="$1" color="$error600" fontSize="$sm">
+            {errors.email}
+          </Text>
+        ) : null}
+
         <Input
           borderRadius="$xl"
           isInvalid={isDirty && (!!errors.height || !!errors.form)}
