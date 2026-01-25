@@ -5,6 +5,8 @@ info:
 servers:
   - url: http://localhost:8080/usermanagement/api
     description: Local development server
+  - url: https://mrbreathe.instatunnel.my
+    description: Publicly accessible server via InstaTunnel
 
 
 paths:
