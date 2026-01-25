@@ -1,31 +1,27 @@
 import React, { useMemo, useState } from "react";
-import { Alert, Pressable } from "react-native";
-import { router } from "expo-router";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
   ButtonText,
   HStack,
   Heading,
-  ScrollView,
   Text,
   VStack,
 } from "@gluestack-ui/themed";
-import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import RecordingPanel from "../src/components/RecordingPanel";
-import { useAppState } from "../src/state/AppState";
+import RecordingPanel from "../components/RecordingPanel";
+import { useAppState } from "../state/AppState";
 
 export default function DashboardScreen() {
   const { rows, addRow, isProfileComplete } = useAppState();
   const [recordingVisible, setRecordingVisible] = useState(false);
-  const insets = useSafeAreaInsets();
+  const navigate = useNavigate();
 
   const badgeVisible = useMemo(() => !isProfileComplete, [isProfileComplete]);
 
   function startRecording() {
     if (!isProfileComplete) {
-      Alert.alert("Missing Info", "Please enter your personal information first.");
+      alert("Missing Info", "Please enter your personal information first.");
       return;
     }
     setRecordingVisible(true);
@@ -41,26 +37,29 @@ export default function DashboardScreen() {
   }
 
   return (
-    <Box flex={1} bg="$background0">
+    <Box style={{ flex: 1, display: "flex", flexDirection: "column" }} bg="$background0">
       {/* Top bar */}
       <HStack
-        px="$5"
-        pt={insets.top + 12} 
-        pb="$4"
+        px={20}
+        py={16}
         alignItems="center"
         justifyContent="space-between"
-        borderBottomWidth={1}
-        borderBottomColor="$border200"
+        style={{ borderBottom: "1px solid", borderBottomColor: "$border200" }}
       >
         <Heading size="lg">Personal Dashboard</Heading>
 
-        <Pressable
-          onPress={() => router.push("/profile")}
-          style={{ padding: 8 }}
-          hitSlop={10}
+        <button
+          onClick={() => navigate("/profile")}
+          style={{
+            padding: 8,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            position: "relative",
+          }}
         >
           <Box>
-            <Ionicons name="person-circle-outline" size={28} />
+            <span style={{ fontSize: 28 }}>👤</span>
             {badgeVisible && (
               <Box
                 position="absolute"
@@ -70,25 +69,28 @@ export default function DashboardScreen() {
                 h={12}
                 borderRadius={999}
                 bg="$error600"
-                alignItems="center"
-                justifyContent="center"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
-                <Text fontSize="$xs" color="$text0" lineHeight={12}>
+                <Text fontSize="$xs" color="$text0" style={{ lineHeight: 12 }}>
                   !
                 </Text>
               </Box>
             )}
           </Box>
-        </Pressable>
+        </button>
       </HStack>
 
-      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+      <div style={{ padding: 20, paddingBottom: 40, overflowY: "auto", flex: 1 }}>
         <VStack space="lg">
           {/* Record button */}
           <Button
             borderRadius="$2xl"
             size="xl"
-            py="$6"
+            py={24}
             onPress={startRecording}
           >
             <ButtonText fontSize="$xl">Record</ButtonText>
@@ -96,18 +98,16 @@ export default function DashboardScreen() {
 
           {/* Table */}
           <Box
-            borderWidth={1}
-            borderColor="$border200"
+            style={{ border: "1px solid", borderColor: "$border200" }}
             borderRadius="$2xl"
             overflow="hidden"
           >
             {/* Header row */}
             <HStack
-              px="$4"
-              py="$3"
+              px={16}
+              py={12}
               bg="$background50"
-              borderBottomWidth={1}
-              borderBottomColor="$border200"
+              style={{ borderBottom: "1px solid", borderBottomColor: "$border200" }}
               justifyContent="space-between"
             >
               <Text fontWeight="$bold">Timestamp</Text>
@@ -115,7 +115,7 @@ export default function DashboardScreen() {
             </HStack>
 
             {rows.length === 0 ? (
-              <Box px="$4" py="$6">
+              <Box px={16} py={24}>
                 <Text color="$text500">
                   No recordings yet. Tap Record to add one.
                 </Text>
@@ -124,13 +124,12 @@ export default function DashboardScreen() {
               rows.map((r) => (
                 <HStack
                   key={r.id}
-                  px="$4"
-                  py="$4"
-                  borderBottomWidth={1}
-                  borderBottomColor="$border100"
+                  px={16}
+                  py={16}
+                  style={{ borderBottom: "1px solid", borderBottomColor: "$border100" }}
                   justifyContent="space-between"
                 >
-                  <Text flex={1} pr="$4">
+                  <Text style={{ flex: 1, paddingRight: 16 }}>
                     {r.timestamp}
                   </Text>
                   <Text>{r.data}</Text>
@@ -143,7 +142,7 @@ export default function DashboardScreen() {
             All spirometer values are displayed as N/A (frontend-only MVP).
           </Text>
         </VStack>
-      </ScrollView>
+      </div>
 
       {/* Slide-down recording panel */}
       <RecordingPanel
@@ -154,5 +153,3 @@ export default function DashboardScreen() {
     </Box>
   );
 }
-
-

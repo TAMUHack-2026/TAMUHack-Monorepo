@@ -3,25 +3,16 @@
 # dependencies
 node_modules/
 
-# Expo
-.expo/
+# Build outputs
 dist/
-web-build/
-expo-env.d.ts
+build/
+*.tsbuildinfo
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# Electron
+out/
+*.log
 
-# Metro
-.metro-health-check*
-
-# debug
+# Debug
 npm-debug.*
 yarn-debug.*
 yarn-error.*
@@ -30,14 +21,14 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# Local env files
 .env*.local
 
-# typescript
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript
 *.tsbuildinfo
-
-app-example
-
-# generated native folders
-/ios
-/android

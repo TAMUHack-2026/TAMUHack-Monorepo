@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, Dimensions } from "react-native";
 import {
   Box,
   Button,
@@ -17,43 +16,22 @@ type Props = {
 };
 
 export default function RecordingPanel({ visible, onCancel, onFinished }: Props) {
-  const screenH = Dimensions.get("window").height;
-
   const [secondsLeft, setSecondsLeft] = useState<number>(5);
   const [mounted, setMounted] = useState<boolean>(visible);
-
-  const anim = useRef(new Animated.Value(0)).current; 
+  const [translateY, setTranslateY] = useState<string>("-100%");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const translateY = useMemo(
-    () =>
-      anim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [-screenH, 0], 
-      }),
-    [anim, screenH]
-  );
 
   useEffect(() => {
     if (visible) {
       setMounted(true);
-      Animated.timing(anim, {
-        toValue: 1,
-        duration: 280,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }).start();
+      // Trigger animation after mount
+      setTimeout(() => setTranslateY("0%"), 10);
     } else {
-      Animated.timing(anim, {
-        toValue: 0,
-        duration: 240,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: true,
-      }).start(({ finished }) => {
-        if (finished) setMounted(false); 
-      });
+      setTranslateY("-100%");
+      // Wait for animation to complete
+      setTimeout(() => setMounted(false), 240);
     }
-  }, [visible, anim]);
+  }, [visible]);
 
   useEffect(() => {
     if (!visible) {
@@ -87,38 +65,42 @@ export default function RecordingPanel({ visible, onCancel, onFinished }: Props)
   if (!mounted) return null;
 
   return (
-    <Animated.View
+    <div
       style={{
-        position: "absolute",
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        transform: [{ translateY }],
+        transform: `translateY(${translateY})`,
+        transition: translateY === "0%" ? "transform 280ms cubic-bezier(0.4, 0, 0.2, 1)" : "transform 240ms cubic-bezier(0.4, 0, 1, 1)",
         zIndex: 100,
+        pointerEvents: visible ? "auto" : "none",
       }}
-      pointerEvents={visible ? "auto" : "none"}
     >
       {/* Solid blue background */}
-      <Box flex={1} bg="$primary600">
-        <Center flex={1}>
-          <VStack space="lg" px="$6" alignItems="center">
-            <Heading size="xl" color="$text0" textAlign="center">
+      <Box style={{ flex: 1, display: "flex", flexDirection: "column" }} bg="$primary600">
+        <Center style={{ flex: 1 }}>
+          <VStack space="lg" px={24} style={{ alignItems: "center" }}>
+            <Heading size="xl" color="$text0" style={{ textAlign: "center" }}>
               Breathe now
             </Heading>
 
-            <Text color="$text0" opacity={0.9}>
+            <Text color="$text0" style={{ opacity: 0.9 }}>
               Blow steadily into the device
             </Text>
 
             <Box
-              mt="$4"
-              borderRadius="$full"
+              mt={16}
+              borderRadius={999}
               bg="$primary700"
               w={140}
               h={140}
-              alignItems="center"
-              justifyContent="center"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
               <Text fontSize="$6xl" color="$text0">
                 {secondsLeft}
@@ -126,9 +108,9 @@ export default function RecordingPanel({ visible, onCancel, onFinished }: Props)
             </Box>
 
             <Button
-              mt="$6"
+              mt={24}
               variant="outline"
-              borderColor="$text0"
+              style={{ borderColor: "$text0" }}
               onPress={onCancel}
             >
               <ButtonText color="$text0">Cancel</ButtonText>
@@ -136,8 +118,6 @@ export default function RecordingPanel({ visible, onCancel, onFinished }: Props)
           </VStack>
         </Center>
       </Box>
-    </Animated.View>
+    </div>
   );
 }
-
-

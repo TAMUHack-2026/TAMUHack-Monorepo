@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { router } from "expo-router";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -8,17 +8,14 @@ import {
   HStack,
   Input,
   InputField,
-  Pressable,
   Text,
   VStack,
 } from "@gluestack-ui/themed";
-import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SexValue, useAppState } from "../src/state/AppState";
+import { SexValue, useAppState } from "../state/AppState";
 
 export default function ProfileScreen() {
   const { profile, setProfile, isProfileComplete, clearProfile } = useAppState();
-  const insets = useSafeAreaInsets();
+  const navigate = useNavigate();
 
   const [height, setHeight] = useState(profile.height);
   const [weight, setWeight] = useState(profile.weight);
@@ -41,7 +38,7 @@ export default function ProfileScreen() {
       age: age.trim(),
       sex,
     });
-    router.back();
+    navigate(-1);
   }
 
   function clearAll() {
@@ -53,12 +50,20 @@ export default function ProfileScreen() {
   }
 
   return (
-    <Box flex={1} bg="$background0" px="$5" pt={insets.top + 12}>
-      <HStack alignItems="center" justifyContent="space-between" pb="$4">
+    <Box style={{ flex: 1, display: "flex", flexDirection: "column" }} bg="$background0" px={20} pt={12}>
+      <HStack alignItems="center" justifyContent="space-between" pb={16}>
         <HStack alignItems="center" space="md">
-          <Pressable onPress={() => router.back()} p="$2" hitSlop={10}>
-            <Ionicons name="close" size={22} />
-          </Pressable>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              padding: 8,
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            ✕
+          </button>
           <Heading size="lg">Personal Info</Heading>
         </HStack>
 
@@ -67,13 +72,13 @@ export default function ProfileScreen() {
         </Text>
       </HStack>
 
-      <VStack space="md">
+      <VStack space="md" style={{ overflowY: "auto", flex: 1 }}>
         <Input borderRadius="$xl">
           <InputField
             placeholder="Height (e.g., 170 cm)"
             value={height}
-            onChangeText={setHeight}
-            keyboardType="numbers-and-punctuation"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHeight(e.target.value)}
+            type="text"
           />
         </Input>
 
@@ -81,8 +86,8 @@ export default function ProfileScreen() {
           <InputField
             placeholder="Weight (e.g., 70 kg)"
             value={weight}
-            onChangeText={setWeight}
-            keyboardType="numbers-and-punctuation"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setWeight(e.target.value)}
+            type="text"
           />
         </Input>
 
@@ -90,23 +95,22 @@ export default function ProfileScreen() {
           <InputField
             placeholder="Age"
             value={age}
-            onChangeText={setAge}
-            keyboardType="number-pad"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAge(e.target.value)}
+            type="number"
           />
         </Input>
 
         {/* Sex picker */}
         <Box
-          borderWidth={1}
-          borderColor="$border200"
+          style={{ border: "1px solid", borderColor: "$border200" }}
           borderRadius="$2xl"
-          p="$3"
+          p={12}
         >
-          <Text mb="$2" color="$text600">
+          <Text mb={8} color="$text600">
             Sex
           </Text>
 
-          <HStack space="sm" flexWrap="wrap">
+          <HStack space="sm" style={{ flexWrap: "wrap" }}>
             {(["Male", "Female", "Other"] as SexValue[]).map((v) => {
               const selected = sex === v;
               return (
@@ -124,7 +128,7 @@ export default function ProfileScreen() {
           </HStack>
         </Box>
 
-        <VStack space="sm" mt="$2">
+        <VStack space="sm" mt={8}>
           <Button borderRadius="$xl" onPress={save} isDisabled={!localComplete}>
             <ButtonText>Save</ButtonText>
           </Button>
@@ -141,5 +145,3 @@ export default function ProfileScreen() {
     </Box>
   );
 }
-
-

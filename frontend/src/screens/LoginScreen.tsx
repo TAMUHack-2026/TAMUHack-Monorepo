@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { router } from "expo-router";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -15,10 +15,11 @@ import {
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   return (
-    <Center flex={1} px="$6">
-      <Box w="$full" maxWidth={420} p="$6" borderRadius="$2xl" bg="$background0">
+    <Center style={{ flex: 1, padding: 24 }}>
+      <Box w="100%" maxWidth={420} p={24} borderRadius="$2xl" bg="$background0">
         <VStack space="lg">
           <Heading size="xl">Spirometer</Heading>
           <Text color="$text500">
@@ -30,7 +31,7 @@ export default function LoginScreen() {
               <InputField
                 placeholder="Username"
                 value={username}
-                onChangeText={setUsername}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                 autoCapitalize="none"
               />
             </Input>
@@ -38,15 +39,15 @@ export default function LoginScreen() {
             <Input borderRadius="$xl">
               <InputField
                 placeholder="Password"
+                type="password"
                 value={password}
-                onChangeText={setPassword}
-                secureTextEntry
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               />
             </Input>
 
             <Button
               borderRadius="$xl"
-              onPress={() => router.replace("/dashboard")}
+              onPress={() => navigate("/dashboard")}
             >
               <ButtonText>Login</ButtonText>
             </Button>
@@ -56,6 +57,3 @@ export default function LoginScreen() {
     </Center>
   );
 }
-
-
-
