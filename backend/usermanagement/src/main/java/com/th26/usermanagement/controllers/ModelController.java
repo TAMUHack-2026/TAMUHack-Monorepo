@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import jakarta.validation.constraints.Pattern;
 import com.th26.usermanagement.services.ProfileService;
 import com.th26.usermanagement.dtos.responses.ProfileResponse;
 import com.th26.usermanagement.dtos.requests.ModelRerouteRequest;
+import com.th26.usermanagement.exceptions.GatewayException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,7 +41,7 @@ public class ModelController {
         @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$", flags = Pattern.Flag.CASE_INSENSITIVE) 
         String email,
         @RequestBody List<BigDecimal> inputData
-    ) {
+    ) throws MethodArgumentNotValidException {
         ProfileResponse userProfile = this.profileService.getProfileByEmail(email);
         ModelRerouteRequest modelRequest = ModelRerouteRequest.builder()
             .height(userProfile.getHeight())
@@ -48,10 +50,20 @@ public class ModelController {
             .breathData(inputData)
             .build();
 
-        return this.restClient.post()
+        ResponseEntity<String> response = this.restClient.post()
             .uri("/predict")
             .body(modelRequest)
             .retrieve()
             .toEntity(String.class);
+
+        if (response.getStatusCode() == HttpStatus.UNPROCESSABLE_CONTENT) {
+            throw new MethodArgumentNotValidException(null, null);
+        } else if (response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+            throw new RuntimeException("Model service encountered an internal error");
+        } else if (response.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+            throw new GatewayException("Model service is currently unavailable");
+        } else {
+            return response;
+        }
     }
 }
