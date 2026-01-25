@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import com.th26.usermanagement.services.ModelService;
 
@@ -29,9 +31,11 @@ public class ModelController {
     @PostMapping("/{email:.+}")
     public ResponseEntity<String> queryModel(
         @PathVariable("email") 
-        @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$", flags = Pattern.Flag.CASE_INSENSITIVE) 
+        @Email(regexp="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$", flags=Pattern.Flag.CASE_INSENSITIVE) 
         String email,
-        @RequestBody List<BigDecimal> inputData
+        @RequestBody
+        @Size(min=1)
+        List<@DecimalMin(value="0.0") BigDecimal> inputData
     ) throws MethodArgumentNotValidException {
         return this.modelService.runInference(email, inputData);
     }
