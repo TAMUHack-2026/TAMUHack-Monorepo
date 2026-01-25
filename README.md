@@ -27,7 +27,7 @@ To start the entire backend, run:
 make # This can also be run as `make all` 
 ```
 
-The backend will be running on [https://mrbreathe.instatunnel.my](https://mrbreathe.instatunnel.my) once all services are up.
+The backend will be running on [https://mrbreatheth26.instatunnel.my](https://mrbreathe.instatunnel.my) once all services are up.
 
 To build all backend services without starting them, use:
 
