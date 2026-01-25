@@ -1,8 +1,6 @@
 package com.th26.usermanagement.controllers;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,15 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.client.RestClient;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 
-import com.th26.usermanagement.services.ProfileService;
-import com.th26.usermanagement.dtos.responses.ProfileResponse;
-import com.th26.usermanagement.dtos.requests.ModelRerouteRequest;
-import com.th26.usermanagement.exceptions.GatewayException;
+import com.th26.usermanagement.services.ModelService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,12 +21,9 @@ import java.util.List;
 @Validated
 @RequestMapping("/usermanagement/api/predict")
 public class ModelController {
-    private ProfileService profileService;
-    private RestClient restClient;
-
-    public ModelController(ProfileService profileService, @Value("${com.th26.model.endpoint}") String modelEndpoint) {
-        this.profileService = profileService;
-        this.restClient = RestClient.create(modelEndpoint);
+    private final ModelService modelService;
+    public ModelController(ModelService modelService) {
+        this.modelService = modelService;
     }
 
     @PostMapping("/{email:.+}")
@@ -42,28 +33,6 @@ public class ModelController {
         String email,
         @RequestBody List<BigDecimal> inputData
     ) throws MethodArgumentNotValidException {
-        ProfileResponse userProfile = this.profileService.getProfileByEmail(email);
-        ModelRerouteRequest modelRequest = ModelRerouteRequest.builder()
-            .height(userProfile.getHeight())
-            .weight(userProfile.getWeight())
-            .sex(userProfile.getSex())
-            .breathData(inputData)
-            .build();
-
-        ResponseEntity<String> response = this.restClient.post()
-            .uri("/predict")
-            .body(modelRequest)
-            .retrieve()
-            .toEntity(String.class);
-
-        if (response.getStatusCode() == HttpStatus.UNPROCESSABLE_CONTENT) {
-            throw new MethodArgumentNotValidException(null, null);
-        } else if (response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-            throw new RuntimeException("Model service encountered an internal error");
-        } else if (response.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
-            throw new GatewayException("Model service is currently unavailable");
-        } else {
-            return response;
-        }
+        return this.modelService.runInference(email, inputData);
     }
 }
