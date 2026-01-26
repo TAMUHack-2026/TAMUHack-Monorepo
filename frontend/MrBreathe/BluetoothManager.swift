@@ -11,9 +11,11 @@ import Combine
 
 class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     private var centralManager: CBCentralManager!
-    private var connectedPeripheral: CBPeripheral?;
-    private var retryCount = 0;
-    private let maxRetries = 5;
+    private var connectedPeripheral: CBPeripheral?
+    private var retryCount = 0
+    private let maxRetries = 5
+    private var floatBuffer = Data()
+    private let floatSize = 4
     
     let serviceUUID = CBUUID(string: "FFE0")
     let characteristicUUID = CBUUID(string: "FFE1")
@@ -43,11 +45,11 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         if (peripheral.name?.contains("?") ?? false) {
             self.connectedPeripheral = peripheral
-            centralManager.connect(peripheral, options: nil)
+            self.centralManager.connect(peripheral, options: nil)
             DispatchQueue.main.async {
                 self.message = "Found device, connecting..."
             }
-            centralManager.stopScan()
+            self.centralManager.stopScan()
         }
     }
     
@@ -67,6 +69,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     
     /*
      * Runs when a connection fails or is dropped after being discovered
+     * Retries connections without rescanning before retrying connections with rescanning
      */
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         if self.retryCount < self.maxRetries {
@@ -115,11 +118,22 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
      */
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard let data = characteristic.value else { return }
-        
-        if let message = String(data: data, encoding: .utf8) {
-            DispatchQueue.main.async {
-                self.message = message
+        self.floatBuffer.append(data)
+        while (self.floatBuffer.count >= self.floatSize) {
+            let floatData = self.floatBuffer.prefix(self.floatSize)
+            let floatValue = floatData.withUnsafeBytes {
+                buffer in buffer.load(as: Float.self)
             }
+            
+            DispatchQueue.main.async {
+                self.message = String(format: "%.2f", floatValue)
+            }
+            self.floatBuffer.removeFirst(self.floatSize)
+        }
+        
+        if self.floatBuffer.count > 100 {
+            print("Buffer overflow")
+            self.floatBuffer.removeAll(keepingCapacity: false)
         }
     }
     
@@ -132,6 +146,25 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             self.isConnected = false
             self.message = "Disconnected"
         }
-
     }
+    
+//    /*
+//     * Restores existing connections and states
+//     */
+//    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
+//        if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
+//            for peripheral in peripherals {
+//                self.connectedPeripheral = peripheral
+//                peripheral.delegate = self
+//                
+//                if peripheral.state == .connected {
+//                    DispatchQueue.main.async {
+//                        self.isConnected = true
+//                        self.message = "Connection restored"
+//                    }
+//                }
+//                peripheral.discoverServices([serviceUUID])
+//            }
+//        }
+//    }
 }
