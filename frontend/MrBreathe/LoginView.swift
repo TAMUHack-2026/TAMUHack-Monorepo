@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 
+// Hold data for creating an account
 class AccountData: ObservableObject {
     @Published var firstName: String = ""
     @Published var lastName: String = ""
@@ -21,6 +22,7 @@ class AccountData: ObservableObject {
     @Published var genderIdentity: String = ""
 }
 
+// Set font style for main title text on login page
 struct TitleFontStyle: ViewModifier {
     func body(content: Content) -> some View {
         content.bold(true)
@@ -29,6 +31,7 @@ struct TitleFontStyle: ViewModifier {
     }
 }
 
+// Set Button style for sign up and login buttons
 struct AccountButtonStyle: ViewModifier {
     func body(content: Content) -> some View {
         content.foregroundColor(Color(.white))
@@ -38,6 +41,7 @@ struct AccountButtonStyle: ViewModifier {
     }
 }
 
+// Set TextField style for username and password fields
 struct LoginTextInputStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -45,6 +49,7 @@ struct LoginTextInputStyle: ViewModifier {
     }
 }
 
+// Set TextField style for account creation fields
 struct CreateAccountTextInputStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -52,6 +57,7 @@ struct CreateAccountTextInputStyle: ViewModifier {
     }
 }
 
+// Register styles to View
 extension View {
     func titleFont() -> some View {
         self.modifier(TitleFontStyle())
@@ -69,21 +75,27 @@ extension View {
     }
 }
 
+// Main login screen
 struct LoginView: View {
     @StateObject private var accountData = AccountData()
     @State private var showModal: Bool = false
     
+    // Call when the Sign Up button is pressed
     func onSignUp() {
         showModal = true
     }
     
+    // Call when the Log In button is pressed
     func onLogin() {
         
     }
     
     var body: some View {
+        // Main title text
         Text("Mr. Breathe")
             .titleFont()
+        
+        // Username and password fields
         VStack {
             VStack {
                 TextField("Username", text: $accountData.email)
@@ -96,6 +108,7 @@ struct LoginView: View {
             .textInputAutocapitalization(.never)
             .disableAutocorrection(true)
             
+            // Sign up buttons
             HStack {
                 Button(action: onSignUp) {
                     Text("Sign Up")
@@ -124,16 +137,24 @@ struct CreateAccountModal: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var accountData: AccountData
     
+    func onCreateAccount() {
+        
+    }
+    
     var body: some View {
         NavigationStack {
+            // Main title text
             Text("Create Account")
                 .titleFont()
             
+            // Form fields
             VStack(alignment: .leading, spacing: 15) {
+                // Name fields
                 TextField("First Name", text: $accountData.firstName)
                     .createAccountTextInput()
                 TextField("Last Name", text: $accountData.lastName)
                     .createAccountTextInput()
+                // Height, weight, age information in a line
                 HStack {
                     TextField("Height (in)", value: $accountData.height, format: .number)
                         .createAccountTextInput()
@@ -144,6 +165,7 @@ struct CreateAccountModal: View {
                     TextField("Age", value: $accountData.age, format: .number)
                         .createAccountTextInput()
                 }
+                // Sex and gender information in a line
                 HStack {
                     Picker("Select Sex", selection: $accountData.sex) {
                         Text("Select").tag(nil as String?)
@@ -160,6 +182,11 @@ struct CreateAccountModal: View {
                     TextField("Gender Identity", text: $accountData.genderIdentity)
                         .createAccountTextInput()
                 }
+                Button(action: onCreateAccount) {
+                    Text("Create Account")
+                }
+                    .accountButton()
+                    .frame(maxWidth: .infinity)
             }
             .frame(maxWidth: 350)
             .navigationTitle("Sign Up")
