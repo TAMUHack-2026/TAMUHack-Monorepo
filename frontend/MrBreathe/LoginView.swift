@@ -137,6 +137,7 @@ struct CreateAccountModal: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var accountData: AccountData
     
+    // Create a new account
     func onCreateAccount() {
         
     }
@@ -154,6 +155,7 @@ struct CreateAccountModal: View {
                     .createAccountTextInput()
                 TextField("Last Name", text: $accountData.lastName)
                     .createAccountTextInput()
+                
                 // Height, weight, age information in a line
                 HStack {
                     TextField("Height (in)", value: $accountData.height, format: .number)
@@ -165,6 +167,7 @@ struct CreateAccountModal: View {
                     TextField("Age", value: $accountData.age, format: .number)
                         .createAccountTextInput()
                 }
+                
                 // Sex and gender information in a line
                 HStack {
                     Picker("Select Sex", selection: $accountData.sex) {
@@ -182,6 +185,8 @@ struct CreateAccountModal: View {
                     TextField("Gender Identity", text: $accountData.genderIdentity)
                         .createAccountTextInput()
                 }
+                
+                // Account creation button
                 Button(action: onCreateAccount) {
                     Text("Create Account")
                 }

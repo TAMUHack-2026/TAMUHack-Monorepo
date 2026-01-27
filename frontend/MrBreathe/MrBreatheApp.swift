@@ -11,7 +11,7 @@ import SwiftUI
 struct MrBreatheApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView()
         }
     }
 }
