@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var session: SessionManager
+    private let api = UserManagementAPI()
 
     // Table data
     @State private var records: [RecordEntry] = []
@@ -14,20 +15,21 @@ struct HomeView: View {
     // Countdown
     @State private var countdown: Int = 5
 
+    // Errors
+    @State private var showError: Bool = false
+    @State private var errorMessage: String = ""
+
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
                 ZStack {
-                    // Background
-                    Color(.systemGroupedBackground)
-                        .ignoresSafeArea()
+                    Color(.systemGroupedBackground).ignoresSafeArea()
 
-                    // Main content
                     ScrollView {
                         VStack(alignment: .leading, spacing: 18) {
                             header
 
-                            actionButtons
+                            actionButtons(screenHeight: geo.size.height)
 
                             recordingsCard
                         }
@@ -40,16 +42,11 @@ struct HomeView: View {
                     .navigationBarHidden(showRecordingOverlay)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                session.logout()
-                            } label: {
-                                Text("Log out")
-                            }
-                            .disabled(isRecordingInProgress)
+                            Button("Log out") { session.logout() }
+                                .disabled(isRecordingInProgress)
                         }
                     }
 
-                    // Recording overlay (same logic, nicer layout)
                     if showRecordingOverlay {
                         ZStack {
                             Color.blue.ignoresSafeArea()
@@ -79,9 +76,12 @@ struct HomeView: View {
                 }
             }
         }
+        .alert("Error", isPresented: $showError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
+        }
     }
-
-    // MARK: - UI Sections
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -89,18 +89,23 @@ struct HomeView: View {
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.primary)
 
-            Text("Record a session or pair your device.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            if let prof = session.profile {
+                Text("Hi, \(prof.first_name). Record a session or pair your device.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("Record a session or pair your device.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(.top, 4)
     }
 
-    private var actionButtons: some View {
+    private func actionButtons(screenHeight: CGFloat) -> some View {
         VStack(spacing: 12) {
             Button {
-                // same logic
-                startRecordingAnimation(screenHeight: UIScreen.main.bounds.height)
+                startRecordingAnimation(screenHeight: screenHeight)
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "waveform.path.ecg")
@@ -125,16 +130,13 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(.plain)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.blue)
-            )
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color.blue))
             .shadow(radius: 10, y: 6)
             .disabled(isRecordingInProgress)
             .opacity(isRecordingInProgress ? 0.7 : 1.0)
 
             Button {
-                // TODO later
+                // TODO: Bluetooth later
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "dot.radiowaves.left.and.right")
@@ -159,14 +161,8 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(.plain)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.systemBackground))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color(.separator), lineWidth: 1)
-            )
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color(.systemBackground)))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color(.separator), lineWidth: 1))
             .disabled(isRecordingInProgress)
             .opacity(isRecordingInProgress ? 0.7 : 1.0)
         }
@@ -177,101 +173,114 @@ struct HomeView: View {
             HStack {
                 Text("Recent Recordings")
                     .font(.headline)
-
                 Spacer()
-
                 Text("\(records.count)")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
-            // Keep the List table, just styled inside a card
-            Group {
-                if records.isEmpty {
-                    VStack(spacing: 8) {
-                        Image(systemName: "list.bullet.rectangle")
-                            .font(.title2)
-                            .foregroundStyle(.secondary)
-
-                        Text("No recordings yet")
-                            .foregroundStyle(.secondary)
-                            .font(.subheadline)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 28)
-                } else {
-                    List {
-                        ForEach(records) { entry in
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(entry.timestamp.formatted(date: .abbreviated, time: .standard))
-                                        .font(.subheadline)
-
-                                    Text("Result")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-
-                                Spacer()
-
-                                Text(entry.data) // "N/A"
+            if records.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "list.bullet.rectangle")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                    Text("No recordings yet")
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 28)
+            } else {
+                List {
+                    ForEach(records) { entry in
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(entry.timestamp.formatted(date: .abbreviated, time: .standard))
+                                    .font(.subheadline)
+                                Text("Result")
+                                    .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
-                            .listRowBackground(Color(.systemBackground))
+                            Spacer()
+                            Text(entry.data)
+                                .foregroundStyle(.secondary)
                         }
+                        .listRowBackground(Color(.systemBackground))
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
-                    .frame(height: 240)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .frame(height: 240)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }
         .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color(.systemBackground))
-        )
+        .background(RoundedRectangle(cornerRadius: 18).fill(Color(.systemBackground)))
         .shadow(radius: 10, y: 6)
     }
 
-    // MARK: - Logic (unchanged)
+    // MARK: - Recording Logic + Backend Predict
 
     private func startRecordingAnimation(screenHeight: CGFloat) {
         guard !isRecordingInProgress else { return }
+        guard let email = session.email else {
+            errorMessage = "No logged-in user email found."
+            showError = true
+            return
+        }
 
         isRecordingInProgress = true
         countdown = 5
         showRecordingOverlay = true
 
         Task {
+            // Countdown 5 → 0
             for t in stride(from: 5, through: 0, by: -1) {
                 await MainActor.run {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        countdown = t
-                    }
+                    withAnimation(.easeInOut(duration: 0.2)) { countdown = t }
                 }
                 if t > 0 {
                     try? await Task.sleep(nanoseconds: 1_000_000_000)
                 }
             }
 
+            // Slide overlay off-screen
             await MainActor.run {
                 withAnimation(.easeInOut(duration: 0.6)) {
                     overlayOffset = screenHeight
                 }
             }
-
             try? await Task.sleep(nanoseconds: 650_000_000)
+
+            // Hide overlay and add a row immediately
+            let timestamp = Date()
+            let newEntry = RecordEntry(timestamp: timestamp, data: "Analyzing…")
 
             await MainActor.run {
                 showRecordingOverlay = false
-                isRecordingInProgress = false
+                records.insert(newEntry, at: 0)
+            }
 
-                records.insert(
-                    RecordEntry(timestamp: Date(), data: "N/A"),
-                    at: 0
-                )
+            // Call backend gateway -> model
+            // Mock breath data for now (must be non-empty per schema)
+            let mockBreathData: [Double] = [1.0, 2.0, 3.0]
+
+            do {
+                let diagnosis = try await api.predict(email: email, breathData: mockBreathData)
+                await MainActor.run {
+                    // Update the newest record (index 0)
+                    if !records.isEmpty {
+                        records[0].data = diagnosis.isEmpty ? "N/A" : diagnosis
+                    }
+                    isRecordingInProgress = false
+                }
+            } catch {
+                await MainActor.run {
+                    if !records.isEmpty { records[0].data = "Error" }
+                    errorMessage = error.localizedDescription
+                    showError = true
+                    isRecordingInProgress = false
+                }
             }
         }
     }

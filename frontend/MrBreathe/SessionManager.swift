@@ -10,17 +10,16 @@ import Combine
 
 final class SessionManager: ObservableObject {
     @Published var isLoggedIn: Bool = false
-
-    func login(username: String, password: String) -> Bool {
-        let ok = !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-              && !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        if ok { isLoggedIn = true }
-        return ok
-    }
+    @Published var email: String? = nil
+    @Published var profile: Profile? = nil
 
     func logout() {
         isLoggedIn = false
+        email = nil
+        profile = nil
     }
 }
+
+
 
 

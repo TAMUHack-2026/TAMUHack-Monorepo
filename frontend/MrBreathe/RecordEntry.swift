@@ -8,7 +8,14 @@
 import Foundation
 
 struct RecordEntry: Identifiable {
-    let id = UUID()
+    let id: UUID
     let timestamp: Date
-    let data: String
+    var data: String
+
+    init(timestamp: Date, data: String) {
+        self.id = UUID()
+        self.timestamp = timestamp
+        self.data = data
+    }
 }
+
