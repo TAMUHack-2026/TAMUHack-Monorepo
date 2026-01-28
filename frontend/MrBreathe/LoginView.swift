@@ -22,59 +22,6 @@ class AccountData: ObservableObject {
     @Published var genderIdentity: String = ""
 }
 
-// Set font style for main title text on login page
-struct TitleFontStyle: ViewModifier {
-    func body(content: Content) -> some View {
-        content.bold(true)
-            .font(.largeTitle)
-            .foregroundStyle(Color(.systemBlue))
-    }
-}
-
-// Set Button style for sign up and login buttons
-struct AccountButtonStyle: ViewModifier {
-    func body(content: Content) -> some View {
-        content.foregroundColor(Color(.white))
-            .padding(6)
-            .buttonStyle(.borderedProminent)
-            .controlSize(.small)
-    }
-}
-
-// Set TextField style for username and password fields
-struct LoginTextInputStyle: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .textFieldStyle(.roundedBorder)
-    }
-}
-
-// Set TextField style for account creation fields
-struct CreateAccountTextInputStyle: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .textFieldStyle(.roundedBorder)
-    }
-}
-
-// Register styles to View
-extension View {
-    func titleFont() -> some View {
-        self.modifier(TitleFontStyle())
-    }
-    func accountButton() -> some View {
-        self.modifier(AccountButtonStyle())
-    }
-    
-    func loginTextInput() -> some View {
-        self.modifier(LoginTextInputStyle())
-    }
-    
-    func createAccountTextInput() -> some View {
-        self.modifier(CreateAccountTextInputStyle())
-    }
-}
-
 // Main login screen
 struct LoginView: View {
     @StateObject private var accountData = AccountData()
@@ -133,6 +80,7 @@ struct LoginView: View {
     }
 }
 
+// Modal popup for making a new account when Sign Up is pressed
 struct CreateAccountModal: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var accountData: AccountData
