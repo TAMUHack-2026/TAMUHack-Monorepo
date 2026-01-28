@@ -141,7 +141,6 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             self.floatBuffer.removeFirst(self.floatSize)
         }
         
-        self.message = "Connected!"
         // Clear buffer on overflow
         if self.floatBuffer.count > 100 {
             print("Buffer overflow")
@@ -150,6 +149,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         
         // Clear buffer when data isn't being received anymore
         if !self.receivingData {
+            self.message = "Connected!"
             self.floatBuffer.removeAll(keepingCapacity: false)
         }
     }
@@ -204,24 +204,4 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         self.retryConnection()
     }
-    
-//    /*
-//     * Restores existing connections and states
-//     */
-//    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
-//        if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
-//            for peripheral in peripherals {
-//                self.connectedPeripheral = peripheral
-//                peripheral.delegate = self
-//                
-//                if peripheral.state == .connected {
-//                    DispatchQueue.main.async {
-//                        self.isConnected = true
-//                        self.message = "Connection restored"
-//                    }
-//                }
-//                peripheral.discoverServices([serviceUUID])
-//            }
-//        }
-//    }
 }
