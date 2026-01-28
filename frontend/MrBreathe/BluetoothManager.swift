@@ -106,7 +106,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     
     /*
      * Called when finding the characteristics of a peripheral service
-     * Enbables notifications for each valid service
+     * Enables notifications for each valid service
      */
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.characteristics else { return }
