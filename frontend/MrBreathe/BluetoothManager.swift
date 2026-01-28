@@ -10,23 +10,28 @@ import CoreBluetooth
 import Combine
 
 class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+    // Bluetooth handlers
     private var centralManager: CBCentralManager!
     private var connectedPeripheral: CBPeripheral?
+    
+    // UUIDs for bluetooth device
+    let serviceUUID = CBUUID(string: "FFE0")
+    let characteristicUUID = CBUUID(string: "FFE1")
+    
+    // Retry variables
     private var retryCount = 0
     private let maxRetries = 5
     
     // Buffer handles raw byte data
     private var floatBuffer = Data()
     private let floatSize = 4
+    
     // Array handles actual processed floats
-    private var bluetoothData: [Float] = []
-    private var receivingData = false
+    @Published private var bluetoothData: [Float] = []
+    @Published private var receivingData = false
     
-    let serviceUUID = CBUUID(string: "FFE0")
-    let characteristicUUID = CBUUID(string: "FFE1")
-    
-    
-    @Published var message: String = "default"
+    // Published external data for UI purposes
+    @Published var message: String = "Initialized"
     @Published var isConnected: Bool = false
     
     override init() {
@@ -35,6 +40,9 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     }
     
     // Class methods
+    func isReceivingData() -> Bool {
+        return self.receivingData
+    }
     func toggleReception() {
         self.receivingData.toggle()
     }
@@ -68,7 +76,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             self.connectedPeripheral = peripheral
             self.centralManager.connect(peripheral, options: nil)
             DispatchQueue.main.async {
-                self.message = "Found device, connecting..."
+                self.message = "Connecting..."
             }
             self.centralManager.stopScan()
         }
@@ -82,33 +90,10 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         DispatchQueue.main.async {
             self.isConnected = true
-            self.message = "Connected"
+            self.message = "Connected!"
         }
         peripheral.delegate = self
         peripheral.discoverServices([serviceUUID])
-    }
-    
-    /*
-     * Runs when a connection fails or is dropped after being discovered
-     * Retries connections without rescanning before retrying connections with rescanning
-     */
-    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        // Retry without rescan
-        if self.retryCount < self.maxRetries {
-            self.retryCount += 1
-            DispatchQueue.main.asyncAfter(deadline: .now() + pow(2.0, Double(self.retryCount) - 1.0)) {
-                if let peripheral = self.connectedPeripheral {
-                    self.centralManager.connect(peripheral, options: nil)
-                }
-            }
-        } else { // Retry with rescan
-            self.retryCount = 0;
-            DispatchQueue.main.async {
-                self.isConnected = false
-                self.message = "Failed to connect. Rescanning for peripherals."
-            }
-            centralManager.scanForPeripherals(withServices: [serviceUUID], options: nil)
-        }
     }
     
     /*
@@ -180,6 +165,29 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         DispatchQueue.main.async {
             self.isConnected = false
             self.message = "Disconnected"
+        }
+    }
+    
+    /*
+     * Runs when a connection fails or is dropped after being discovered
+     * Retries connections without rescanning before retrying connections with rescanning
+     */
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        // Retry without rescan
+        if self.retryCount < self.maxRetries {
+            self.retryCount += 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + pow(2.0, Double(self.retryCount) - 1.0)) {
+                if let peripheral = self.connectedPeripheral {
+                    self.centralManager.connect(peripheral, options: nil)
+                }
+            }
+        } else { // Retry with rescan
+            self.retryCount = 0;
+            DispatchQueue.main.async {
+                self.isConnected = false
+                self.message = "Rescanning..."
+            }
+            centralManager.scanForPeripherals(withServices: [serviceUUID], options: nil)
         }
     }
     
