@@ -128,7 +128,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             self.message = "Receiving Data..."
         }
         
-        while self.floatBuffer.count >= self.floatSize {
+        while self.floatBuffer.count >= self.floatSize && self.receivingData {
             let floatData = self.floatBuffer.prefix(self.floatSize)
             let floatValue = floatData.withUnsafeBytes {
                 buffer in buffer.load(as: Float.self)
