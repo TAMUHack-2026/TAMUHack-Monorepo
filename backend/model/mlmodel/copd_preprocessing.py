@@ -10,7 +10,7 @@ must create xlsx in copd/data directory
 
 '''
 
-def downsample_data(flow_rate_data, source_rate = 200, target_rate = 100):
+def _downsample_data(flow_rate_data, source_rate = 200, target_rate = 100):
     """downsamples data from 5 ms to 10 ms by cutting the points in half"""
 
     downsample_factor = int(source_rate/target_rate)
@@ -27,7 +27,7 @@ def downsample_data(flow_rate_data, source_rate = 200, target_rate = 100):
     b, a = signal.butter(4, cutoff_normalized, btype='low')
     
     # Apply filter
-    flow_filtered = signal.filtfilt(b, a, flow_data_200hz)
+    flow_filtered = signal.filtfilt(b, a, flow_rate_data)
     
     # Decimate (take every Nth sample)
     flow_downsampled = flow_filtered[::downsample_factor]
@@ -36,7 +36,7 @@ def downsample_data(flow_rate_data, source_rate = 200, target_rate = 100):
  
 def process_excel_file(voltages, source_rate = 200, target_rate = 100):
     
-    flow_data = downsample_data(
+    flow_data = _downsample_data(
         flow_rate_data = to_flow_rate(voltages),
         source_rate = source_rate,
         target_rate = target_rate
@@ -64,6 +64,6 @@ def process_excel_file(voltages, source_rate = 200, target_rate = 100):
     df = pd.DataFrame(data)
 
     out_dir = "COPD_Early_Prediction"
-    os.make_dirs(out_dir, exist_ok = True)
+    os.makedirs(out_dir, exist_ok = True)
     excel_path = os.path.join(out_dir, "infer.xlsx")
     df.to_excel(excel_path, index = False)

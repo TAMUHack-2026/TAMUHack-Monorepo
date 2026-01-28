@@ -10,18 +10,6 @@ from utils.predict_utils import (
     run_spiro_predictor,
 )
 
-from utils.predict_utils import (
-    load_spiro_encoder,
-    preprocess_data,
-    run_spiro_encoder,
-    run_spiro_explainer,
-    load_cb_model,
-    run_spiro_predictor,
-)
-
-
-
-
 def copd_risk(data_path: str, age: int, sex: int, smoke: int):
     folders = ['weights']
     for folder in folders:

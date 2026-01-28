@@ -2,7 +2,7 @@ import numpy as np
 
 
 def to_flow_rate(voltages: list, K: float = 1.0, baseline_voltage: float = 0) -> np.ndarray:
-    """"
+    """
     voltages: list of floats reperesting voltages over time
     K: calibration constant 
     sampling_rate: float in ms(5 ms = 200hz)
@@ -172,7 +172,7 @@ def blow_duration(flow, time, start_idx, exhale_positive=True,
     return duration, end_idx
 
 
-def summary_statisitcs(voltages =  [_ for _ in range(1000)]):
+def summary_statistics(voltages =  [_ for _ in range(1000)]):
     """
     returns a dictionary of summary stats
 
