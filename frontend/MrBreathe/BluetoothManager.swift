@@ -194,9 +194,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             return
         }
         
-        if self.retryCount < self.maxRetries {
-            self.retryConnection()
-        }
+        self.retryConnection()
     }
     
     /*
