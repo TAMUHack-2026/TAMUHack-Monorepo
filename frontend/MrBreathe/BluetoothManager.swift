@@ -43,11 +43,12 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     func isReceivingData() -> Bool {
         return self.receivingData
     }
+    // Toggle receiving data on or off
     func toggleReception() {
         self.receivingData.toggle()
     }
-    
-    func clearBreathData() {
+    // Clear bluetooth data
+    func clearBluetoothData() {
         self.bluetoothData.removeAll(keepingCapacity: false)
     }
     
