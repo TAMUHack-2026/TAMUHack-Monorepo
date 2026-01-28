@@ -8,46 +8,113 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var session: SessionManager
+    // Table data
+    @State private var records: [RecordEntry] = []
+
+    // Overlay animation state
+    @State private var showRecordingOverlay: Bool = false
+    @State private var overlayOffset: CGFloat = -2000 // will be set properly on appear
+    @State private var isRecordingInProgress: Bool = false
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 12) {
+            GeometryReader { geo in
+                ZStack {
+                    // Main content
+                    VStack(spacing: 12) {
+                        Spacer()
 
-                // Center vertically: push content into the middle
-                Spacer()
+                        Button("Record") {
+                            startRecordingAnimation(screenHeight: geo.size.height)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(isRecordingInProgress)
 
-                Button("Record") {
-                    // TODO: Recording flow later
-                }
-                .buttonStyle(.borderedProminent)
+                        Button("Pair") {
+                            // TODO: Bluetooth later
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(isRecordingInProgress)
 
-                Button("Pair") {
-                    // TODO: Bluetooth pairing later
-                }
-                .buttonStyle(.bordered)
+                        // iOS List "table"
+                        List {
+                            if records.isEmpty {
+                                Text("No recordings yet")
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                ForEach(records) { entry in
+                                    HStack {
+                                        Text(entry.timestamp.formatted(date: .abbreviated, time: .standard))
+                                            .font(.subheadline)
 
-                // iOS List placeholder under the buttons
-                List {
-                    // Leave blank for now (placeholder)
-                    Section {
-                        Text(" ")
-                            .foregroundStyle(.secondary)
+                                        Spacer()
+
+                                        Text(entry.data) // "N/A" for now
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+                        }
+                        .frame(height: 260)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                        Spacer()
+                    }
+                    .padding()
+                    .navigationTitle("Home")
+
+                    // Recording overlay
+                    if showRecordingOverlay {
+                        ZStack {
+                            Color.blue
+                                .ignoresSafeArea()
+
+                            Text("Recording now")
+                                .font(.system(size: 28, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
+                        .offset(y: overlayOffset)
+                        .onAppear {
+                            // Start above the screen, then slide down to cover it
+                            overlayOffset = -geo.size.height
+                            withAnimation(.easeInOut(duration: 0.6)) {
+                                overlayOffset = 0
+                            }
+                        }
                     }
                 }
-                .frame(height: 220)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                Spacer()
             }
-            .padding()
-            .navigationTitle("Home")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Log out") {
-                        session.logout()
-                    }
+        }
+    }
+
+    private func startRecordingAnimation(screenHeight: CGFloat) {
+        guard !isRecordingInProgress else { return }
+        isRecordingInProgress = true
+        showRecordingOverlay = true
+
+        Task {
+            // Stay visible for 5 seconds
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
+
+            // Slide the blue screen down and off the bottom
+            await MainActor.run {
+                withAnimation(.easeInOut(duration: 0.6)) {
+                    overlayOffset = screenHeight
                 }
+            }
+
+            // Wait for the slide-out animation to finish
+            try? await Task.sleep(nanoseconds: 650_000_000)
+
+            // Hide overlay + add table row
+            await MainActor.run {
+                showRecordingOverlay = false
+                isRecordingInProgress = false
+
+                records.insert(
+                    RecordEntry(timestamp: Date(), data: "N/A"),
+                    at: 0
+                )
             }
         }
     }
