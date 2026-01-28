@@ -2,16 +2,20 @@
 //  MrBreatheApp.swift
 //  MrBreathe
 //
-//  Created by K Panchal on 1/25/26.
+//  Created by Rohan Perumalil on 1/27/26.
 //
 
 import SwiftUI
 
 @main
 struct MrBreatheApp: App {
+    @StateObject private var session = SessionManager()
+
     var body: some Scene {
         WindowGroup {
-            LoginView()
+            RootView()
+                .environmentObject(session)
         }
     }
 }
+
