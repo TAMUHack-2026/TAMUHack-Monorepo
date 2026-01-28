@@ -158,22 +158,12 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     }
     
     /*
-     * Runs when a connection is lost
-     * Sets the state to disconnected
+     * Helper function to retry a bluetooth connection
+     * First tries retrying without a rescan
+     * Then rescans all connections and then retries
      */
-    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        DispatchQueue.main.async {
-            self.isConnected = false
-            self.message = "Disconnected"
-        }
-    }
-    
-    /*
-     * Runs when a connection fails or is dropped after being discovered
-     * Retries connections without rescanning before retrying connections with rescanning
-     */
-    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        // Retry without rescan
+    func retryConnection() {
+        // Retry first without rescan
         if self.retryCount < self.maxRetries {
             self.retryCount += 1
             DispatchQueue.main.asyncAfter(deadline: .now() + pow(2.0, Double(self.retryCount) - 1.0)) {
@@ -189,6 +179,35 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             }
             centralManager.scanForPeripherals(withServices: [serviceUUID], options: nil)
         }
+    }
+    
+    /*
+     * Runs when a connection is lost
+     * Sets the state to disconnected
+     * Retries connections without rescanning before retrying connections with rescanning
+     * Only attempts retries if the connection was done erroneously
+     */
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        DispatchQueue.main.async {
+            self.isConnected = false
+            self.message = "Disconnected"
+        }
+        // Skip retry if the disconnect was done intentionally
+        if error == nil {
+            return
+        }
+        
+        if self.retryCount < self.maxRetries {
+            self.retryConnection()
+        }
+    }
+    
+    /*
+     * Runs when a connection fails or is dropped after being discovered
+     * Retries connections without rescanning before retrying connections with rescanning
+     */
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        self.retryConnection()
     }
     
 //    /*
