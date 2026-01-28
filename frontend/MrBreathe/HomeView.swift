@@ -1,9 +1,3 @@
-//
-//  HomeView.swift
-//  MrBreathe
-//
-//  Created by Rohan Perumalil on 1/27/26.
-//
 import SwiftUI
 
 struct HomeView: View {
@@ -24,75 +18,58 @@ struct HomeView: View {
         NavigationStack {
             GeometryReader { geo in
                 ZStack {
+                    // Background
+                    Color(.systemGroupedBackground)
+                        .ignoresSafeArea()
+
                     // Main content
-                    VStack(spacing: 12) {
-                        Spacer()
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 18) {
+                            header
 
-                        Button("Record") {
-                            startRecordingAnimation(screenHeight: geo.size.height)
+                            actionButtons
+
+                            recordingsCard
                         }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(isRecordingInProgress)
-
-                        Button("Pair") {
-                            // TODO: Bluetooth pairing later
-                        }
-                        .buttonStyle(.bordered)
-                        .disabled(isRecordingInProgress)
-
-                        // iOS List "table"
-                        List {
-                            if records.isEmpty {
-                                Text("No recordings yet")
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                ForEach(records) { entry in
-                                    HStack {
-                                        Text(entry.timestamp.formatted(date: .abbreviated, time: .standard))
-                                            .font(.subheadline)
-
-                                        Spacer()
-
-                                        Text(entry.data) // "N/A" for now
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                            }
-                        }
-                        .frame(height: 260)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                        Spacer()
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+                        .padding(.bottom, 24)
                     }
-                    .padding()
                     .navigationTitle("Home")
-                    .navigationBarHidden(showRecordingOverlay) // ✅ hides the "Home" title during recording
+                    .navigationBarTitleDisplayMode(.large)
+                    .navigationBarHidden(showRecordingOverlay)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
-                            Button("Log out") {
+                            Button {
                                 session.logout()
+                            } label: {
+                                Text("Log out")
                             }
                             .disabled(isRecordingInProgress)
                         }
                     }
 
-                    // Recording overlay
+                    // Recording overlay (same logic, nicer layout)
                     if showRecordingOverlay {
                         ZStack {
-                            Color.blue
-                                .ignoresSafeArea()
+                            Color.blue.ignoresSafeArea()
 
-                            VStack(spacing: 12) {
+                            VStack(spacing: 14) {
                                 Text("Recording now")
                                     .font(.system(size: 28, weight: .bold))
                                     .foregroundStyle(.white)
 
                                 CountdownNumber(countdown: countdown)
+
+                                Text("Please breathe steadily for the full duration.")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.white.opacity(0.9))
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 24)
                             }
                         }
                         .offset(y: overlayOffset)
                         .onAppear {
-                            // Start above the screen, then slide down to cover it
                             overlayOffset = -geo.size.height
                             withAnimation(.easeInOut(duration: 0.6)) {
                                 overlayOffset = 0
@@ -104,6 +81,162 @@ struct HomeView: View {
         }
     }
 
+    // MARK: - UI Sections
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Mr. Breathe")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.primary)
+
+            Text("Record a session or pair your device.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.top, 4)
+    }
+
+    private var actionButtons: some View {
+        VStack(spacing: 12) {
+            Button {
+                // same logic
+                startRecordingAnimation(screenHeight: UIScreen.main.bounds.height)
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "waveform.path.ecg")
+                        .font(.headline)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Record")
+                            .font(.headline)
+                        Text("Start a 5-second recording")
+                            .font(.subheadline)
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 14)
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.plain)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.blue)
+            )
+            .shadow(radius: 10, y: 6)
+            .disabled(isRecordingInProgress)
+            .opacity(isRecordingInProgress ? 0.7 : 1.0)
+
+            Button {
+                // TODO later
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "dot.radiowaves.left.and.right")
+                        .font(.headline)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Pair")
+                            .font(.headline)
+                        Text("Connect your spirometer")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 14)
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.plain)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(.systemBackground))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color(.separator), lineWidth: 1)
+            )
+            .disabled(isRecordingInProgress)
+            .opacity(isRecordingInProgress ? 0.7 : 1.0)
+        }
+    }
+
+    private var recordingsCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Recent Recordings")
+                    .font(.headline)
+
+                Spacer()
+
+                Text("\(records.count)")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            // Keep the List table, just styled inside a card
+            Group {
+                if records.isEmpty {
+                    VStack(spacing: 8) {
+                        Image(systemName: "list.bullet.rectangle")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+
+                        Text("No recordings yet")
+                            .foregroundStyle(.secondary)
+                            .font(.subheadline)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 28)
+                } else {
+                    List {
+                        ForEach(records) { entry in
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(entry.timestamp.formatted(date: .abbreviated, time: .standard))
+                                        .font(.subheadline)
+
+                                    Text("Result")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                Spacer()
+
+                                Text(entry.data) // "N/A"
+                                    .foregroundStyle(.secondary)
+                            }
+                            .listRowBackground(Color(.systemBackground))
+                        }
+                    }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .frame(height: 240)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color(.systemBackground))
+        )
+        .shadow(radius: 10, y: 6)
+    }
+
+    // MARK: - Logic (unchanged)
+
     private func startRecordingAnimation(screenHeight: CGFloat) {
         guard !isRecordingInProgress else { return }
 
@@ -112,7 +245,6 @@ struct HomeView: View {
         showRecordingOverlay = true
 
         Task {
-            // Count down 5 → 0 (updates once per second)
             for t in stride(from: 5, through: 0, by: -1) {
                 await MainActor.run {
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -124,17 +256,14 @@ struct HomeView: View {
                 }
             }
 
-            // Slide the blue screen down and off the bottom
             await MainActor.run {
                 withAnimation(.easeInOut(duration: 0.6)) {
                     overlayOffset = screenHeight
                 }
             }
 
-            // Wait for the slide-out animation to finish
             try? await Task.sleep(nanoseconds: 650_000_000)
 
-            // Hide overlay + add table row
             await MainActor.run {
                 showRecordingOverlay = false
                 isRecordingInProgress = false
@@ -155,13 +284,13 @@ private struct CountdownNumber: View {
         Group {
             if #available(iOS 17.0, *) {
                 Text("\(countdown)")
-                    .font(.system(size: 56, weight: .bold))
+                    .font(.system(size: 64, weight: .bold))
                     .foregroundStyle(.white)
                     .monospacedDigit()
                     .contentTransition(.numericText())
             } else {
                 Text("\(countdown)")
-                    .font(.system(size: 56, weight: .bold))
+                    .font(.system(size: 64, weight: .bold))
                     .foregroundStyle(.white)
                     .monospacedDigit()
             }
