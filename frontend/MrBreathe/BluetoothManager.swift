@@ -27,7 +27,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     private let floatSize = 4
     
     // Array handles actual processed floats
-    @Published private var bluetoothData: [Float] = []
+    @Published private(set) var bluetoothData: [Float] = []
     @Published private var receivingData = false
     
     // Published external data for UI purposes
@@ -47,14 +47,9 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         self.receivingData.toggle()
     }
     
-    func getBreathData() -> [Float] {
-        guard !self.receivingData else { return [] }
-        defer {
-            self.bluetoothData.removeAll()
-        }
-        return self.bluetoothData
+    func clearBreathData() {
+        self.bluetoothData.removeAll(keepingCapacity: false)
     }
-    
     
     // BLUETOOTH METHODS DO NOT TOUCH
     
@@ -129,22 +124,23 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         // Only add data if it's being received
         if self.receivingData {
             self.floatBuffer.append(data)
+            self.message = "Receiving Data..."
         }
         
         while self.floatBuffer.count >= self.floatSize {
-            
             let floatData = self.floatBuffer.prefix(self.floatSize)
             let floatValue = floatData.withUnsafeBytes {
                 buffer in buffer.load(as: Float.self)
             }
             
             // Add parsed float data
-            DispatchQueue.main.async {
-                    self.bluetoothData.append(floatValue)
-            }
+            self.bluetoothData.append(floatValue)
+            
+            // Remove parsed float from buffer
             self.floatBuffer.removeFirst(self.floatSize)
         }
         
+        self.message = "Connected!"
         // Clear buffer on overflow
         if self.floatBuffer.count > 100 {
             print("Buffer overflow")
