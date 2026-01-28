@@ -173,6 +173,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             DispatchQueue.main.async {
                 self.isConnected = false
                 self.message = "Rescanning..."
+                self.connectedPeripheral = nil
             }
             centralManager.scanForPeripherals(withServices: [serviceUUID], options: nil)
         }
