@@ -14,8 +14,13 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     private var connectedPeripheral: CBPeripheral?
     private var retryCount = 0
     private let maxRetries = 5
+    
+    // Buffer handles raw byte data
     private var floatBuffer = Data()
     private let floatSize = 4
+    // Array handles actual processed floats
+    private var bluetoothData: [Float] = []
+    private var receivingData = false
     
     let serviceUUID = CBUUID(string: "FFE0")
     let characteristicUUID = CBUUID(string: "FFE1")
@@ -28,6 +33,22 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
     }
+    
+    // Class methods
+    func toggleReception() {
+        self.receivingData.toggle()
+    }
+    
+    func getBreathData() -> [Float] {
+        guard !self.receivingData else { return [] }
+        defer {
+            self.bluetoothData.removeAll()
+        }
+        return self.bluetoothData
+    }
+    
+    
+    // BLUETOOTH METHODS DO NOT TOUCH
     
     /*
      * Fires when app turns on and on Bluetooth state changes
@@ -72,6 +93,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
      * Retries connections without rescanning before retrying connections with rescanning
      */
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        // Retry without rescan
         if self.retryCount < self.maxRetries {
             self.retryCount += 1
             DispatchQueue.main.asyncAfter(deadline: .now() + pow(2.0, Double(self.retryCount) - 1.0)) {
@@ -79,7 +101,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
                     self.centralManager.connect(peripheral, options: nil)
                 }
             }
-        } else {
+        } else { // Retry with rescan
             self.retryCount = 0;
             DispatchQueue.main.async {
                 self.isConnected = false
@@ -118,21 +140,34 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
      */
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard let data = characteristic.value else { return }
-        self.floatBuffer.append(data)
-        while (self.floatBuffer.count >= self.floatSize) {
+        
+        // Only add data if it's being received
+        if self.receivingData {
+            self.floatBuffer.append(data)
+        }
+        
+        while self.floatBuffer.count >= self.floatSize {
+            
             let floatData = self.floatBuffer.prefix(self.floatSize)
             let floatValue = floatData.withUnsafeBytes {
                 buffer in buffer.load(as: Float.self)
             }
             
+            // Add parsed float data
             DispatchQueue.main.async {
-                self.message = String(format: "%.2f", floatValue)
+                    self.bluetoothData.append(floatValue)
             }
             self.floatBuffer.removeFirst(self.floatSize)
         }
         
+        // Clear buffer on overflow
         if self.floatBuffer.count > 100 {
             print("Buffer overflow")
+            self.floatBuffer.removeAll(keepingCapacity: false)
+        }
+        
+        // Clear buffer when data isn't being received anymore
+        if !self.receivingData {
             self.floatBuffer.removeAll(keepingCapacity: false)
         }
     }
