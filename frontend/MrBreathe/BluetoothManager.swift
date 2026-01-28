@@ -169,7 +169,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
                 }
             }
         } else { // Retry with rescan
-            self.retryCount = 0;
+            self.retryCount = 0
             DispatchQueue.main.async {
                 self.isConnected = false
                 self.message = "Rescanning..."
