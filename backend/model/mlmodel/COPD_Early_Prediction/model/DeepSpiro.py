@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torch.nn.utils.rnn as rnn_utils
 from torch.utils.data import Dataset
 
-from model.Net1D import Net1D
+from .Net1D import Net1D
 
 
 class MyDataset(Dataset):

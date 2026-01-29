@@ -169,7 +169,7 @@ def blow_duration(flow, time, start_idx, exhale_positive=True,
         end_idx = start_idx + int(idxs[0])
 
     duration = float(time[end_idx] - time[start_idx])
-    return duration, end_idx
+    return duration
 
 
 def summary_statistics(voltages =  [_ for _ in range(1000)]):

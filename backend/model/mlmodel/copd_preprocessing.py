@@ -42,6 +42,8 @@ def process_excel_file(voltages, source_rate = 200, target_rate = 100):
         target_rate = target_rate
     )
 
+    
+
     #creating time
     time = np.linspace(0,len(flow_data)/target_rate, len(flow_data))
     dt = 1.0 / target_rate
@@ -58,12 +60,13 @@ def process_excel_file(voltages, source_rate = 200, target_rate = 100):
         'fev1':[fev1],
         'pef': [pef],
         'flow'
-        : [flow_data] # may need to do flow_data.tolist()
+        : [','.join(map(str, flow_data.tolist()))]
     }
 
     df = pd.DataFrame(data)
 
-    out_dir = "COPD_Early_Prediction"
+    out_dir = "./mlmodel/COPD_Early_Prediction"
     os.makedirs(out_dir, exist_ok = True)
     excel_path = os.path.join(out_dir, "infer.xlsx")
     df.to_excel(excel_path, index = False)
+

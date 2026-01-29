@@ -12,7 +12,8 @@ from matplotlib.cm import ScalarMappable
 from scipy.ndimage import gaussian_filter1d
 from torch.utils.data import DataLoader
 
-from model.DeepSpiro import DeepSpiro, MyDataset
+from ..model.DeepSpiro import DeepSpiro, MyDataset
+
 
 config = {
     "font.family": 'Times New Roman',
@@ -126,7 +127,7 @@ def calculate_acceleration(row):
 
 def process_data(row):
     handle = row.copy()
-    series = [int(v) for v in row[SPIRO_RECORD_SERIES_KEY].split(',')]
+    series = [int(float(v)) for v in row[SPIRO_RECORD_SERIES_KEY].split(',')]
     series = np.array(series)
     series = smooth(series)
     volume, flow, flow_volume = compute_flow_volume_by_num_points(series, len(series))
