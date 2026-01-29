@@ -6,6 +6,9 @@ from dtos import ModelInput
 from mlmodel import infer
 import uvicorn
 
+from fastapi.responses import RedirectResponse, PlainTextResponse
+import traceback
+
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 api_router = APIRouter(prefix="/model/api")
 
@@ -57,6 +60,14 @@ async def get_swagger_ui():
         swagger_css_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.31.0/swagger-ui.min.css",
     )
 
+#chat gpt suggested edits, may remove later
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/swagger-ui.html")
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=204)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(api_router)
