@@ -3,15 +3,17 @@
 import numpy as np
 import os
 
-from COPD_Early_Prediction import copd_risk
-from asthma_preprocessing import summary_statistics
-from asthma import AsthmaRiskModel
-from copd_preprocessing import process_excel_file
+from .COPD_Early_Prediction import copd_risk
+from .asthma_preprocessing import summary_statistics
+from .asthma import AsthmaRiskModel
+from .copd_preprocessing import process_excel_file
 
 
 def infer(height, weight, sex, breath_data):
     # Dummy implementation for inference
     #sex: 0 is female, 1 is male
+
+    sex = 0 if sex == "female" else 1
 
     height = height * 2.54
     weight = 0.453*weight

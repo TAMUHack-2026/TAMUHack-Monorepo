@@ -1,4 +1,4 @@
-from asthma_preprocessing import to_flow_rate
+from .asthma_preprocessing import to_flow_rate
 import numpy as np
 import pandas as pd
 from scipy import signal
