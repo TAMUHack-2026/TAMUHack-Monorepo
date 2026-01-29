@@ -222,3 +222,11 @@ components:
         - sex
         - height_in
         - weight_lbs
+
+    BreathData:
+      type: array
+      minItems: 1
+      items:
+        type: number
+        format: float
+        exclusiveMinimum: 0
