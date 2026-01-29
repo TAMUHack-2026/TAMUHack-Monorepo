@@ -34,5 +34,6 @@ public class ModelRerouteRequest {
 
     @NotNull
     @JsonProperty("breath_data")
-    private List<@DecimalMin(value="0.0", inclusive = false) BigDecimal> breathData;
+
+    private List<@DecimalMin(value="0.0") BigDecimal> breathData;
 }

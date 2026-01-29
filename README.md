@@ -14,10 +14,10 @@ as well as how to run the backend and frontend code.
 
 ## Running the Backend
 
-> Developing on backend requires Docker and GNU Make to be installed on your machine.
+> Developing on backend requires Docker, GNU Make, and InstaTunnel to be installed on your machine.
 
 The backend utilizes Docker Compose to manage the microservices on your local machine.
-Eventually, we plan to deploy the backend services to a Kubernetes cluster.
+It uses InstaTunnel to expose the local backend services to the internet for integration with mobile devices.
 
 > Before starting any backend service, make sure you're in the `backend/` directory.
 
@@ -26,6 +26,8 @@ To start the entire backend, run:
 ```bash
 make # This can also be run as `make all` 
 ```
+
+The backend will be running on [https://mrbreatheth26.instatunnel.my](https://mrbreathe.instatunnel.my) once all services are up.
 
 To build all backend services without starting them, use:
 

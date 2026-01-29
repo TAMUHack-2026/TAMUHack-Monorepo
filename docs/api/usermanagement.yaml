@@ -5,6 +5,8 @@ info:
 servers:
   - url: http://localhost:8080/usermanagement/api
     description: Local development server
+  - url: https://mrbreathe.instatunnel.my
+    description: Publicly accessible server via InstaTunnel
 
 
 paths:
@@ -145,6 +147,41 @@ paths:
         '503':
           description: Service unavailable
 
+  /predict/{email}:
+    post:
+      summary: Send user email and breath data for prediction
+      description: Gateway endpoint that forwards user data to the Model API for prediction.
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: The email address of the user.
+          schema:
+            type: string
+            format: email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BreathData"
+      responses:
+        '200':
+          description: The diagnosis the model made for the user
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Asthma"
+        '401':
+          description: Unauthorized - authentication failed
+        '404':
+          description: Not found - user does not exist
+        '502':
+          description: Bad gateway - error from Model API
+        '503':
+          description: Service unavailable
+
 
 components:
   schemas:
@@ -229,4 +266,4 @@ components:
       items:
         type: number
         format: float
-        exclusiveMinimum: 0
+        minimum: 0
