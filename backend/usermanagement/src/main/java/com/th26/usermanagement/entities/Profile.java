@@ -64,7 +64,7 @@ public class Profile {
     @Column(name = "gender_identity")
     private String genderIdentity;
 
-    @Column(name = "height_in", nullable = false, precision = 4, scale = 2)
+    @Column(name = "height_in", nullable = false, precision = 5, scale = 2)
     @NotNull
     @DecimalMin(value="0.0", inclusive = false)
     private BigDecimal height;

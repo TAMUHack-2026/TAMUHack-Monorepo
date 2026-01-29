@@ -15,6 +15,6 @@ CREATE TABLE IF NOT EXISTS profiles (
     age SMALLINT NOT NULL CHECK (age >= 0 AND age <= 150),
     sex TEXT NOT NULL CHECK (sex IN ('male', 'female')),
     gender_identity TEXT,
-    height_in NUMERIC(4, 2) NOT NULL CHECK (height_in > 0),
+    height_in NUMERIC(5, 2) NOT NULL CHECK (height_in > 0),
     weight_lbs NUMERIC(5, 2) NOT NULL CHECK (weight_lbs > 0)
 );
