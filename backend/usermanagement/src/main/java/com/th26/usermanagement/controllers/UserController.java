@@ -41,7 +41,7 @@ public class UserController {
         return ResponseEntity.ok("User updated successfully");
     }
     
-    @DeleteMapping("/{email}")
+    @DeleteMapping("/{email:.+}")
     public ResponseEntity<String> deleteUser(@PathVariable("email") @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$", flags = Pattern.Flag.CASE_INSENSITIVE) String email) {
         this.userManagementService.deleteUserByEmail(email);
         return ResponseEntity.ok("User deleted successfully");

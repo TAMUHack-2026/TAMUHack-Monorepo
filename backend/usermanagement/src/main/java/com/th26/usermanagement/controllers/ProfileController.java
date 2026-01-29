@@ -21,7 +21,7 @@ public class ProfileController {
     @Autowired
     private ProfileService profileService;
 
-    @GetMapping("/{email}")
+    @GetMapping("/{email:.+}")
     public ResponseEntity<ProfileResponse> getProfileByEmail(@PathVariable("email") @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$", flags = Pattern.Flag.CASE_INSENSITIVE) String email) {
         return ResponseEntity.ok(profileService.getProfileByEmail(email));
     }

@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 
 import com.th26.usermanagement.exceptions.UserExistsException;
 import com.th26.usermanagement.exceptions.UserNotFoundException;
+import com.th26.usermanagement.exceptions.GatewayException;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -27,6 +28,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleUserExistsException(UserExistsException ex) {
         return ErrorResponse.create(ex, HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(GatewayException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public ErrorResponse handleGatewayException(GatewayException ex) {
+        return ErrorResponse.create(ex, HttpStatus.BAD_GATEWAY, ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
