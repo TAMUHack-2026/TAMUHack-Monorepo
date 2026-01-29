@@ -30,10 +30,10 @@ public class ModelRerouteRequest {
     private BigDecimal weight;
 
     @NotBlank
+    @JsonProperty("sex")
     private String sex;
 
     @NotNull
     @JsonProperty("breath_data")
-
     private List<@DecimalMin(value="0.0") BigDecimal> breathData;
 }

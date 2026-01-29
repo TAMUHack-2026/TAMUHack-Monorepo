@@ -31,11 +31,11 @@ async def predict(input_data: ModelInput):
     # Placeholder for prediction
     try:
         result = infer(
-                input_data.height_in,
-                input_data.weight_lbs,
-                input_data.sex,
-                input_data.breath_data
-        )
+                 input_data.height_in,
+                 input_data.weight_lbs,
+                 input_data.sex,
+                 input_data.breath_data
+         )
     except Exception:
         raise HTTPException(status_code=500, detail="Model inference failed")
 

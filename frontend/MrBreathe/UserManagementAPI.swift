@@ -50,7 +50,7 @@ enum UserManagementError: LocalizedError {
 
 final class UserManagementAPI {
     // ✅ Use tunnel (works on simulator + real iPhone, avoids HTTP/ATS issues)
-    private let baseURL = URL(string: "https://mrbreathe.instatunnel.my/usermanagement/api")!
+    private let baseURL = URL(string: "http://10.244.78.157:8080/usermanagement/api")!
 
     func ping() async throws -> String {
         let url = baseURL.appendingPathComponent("ping")
