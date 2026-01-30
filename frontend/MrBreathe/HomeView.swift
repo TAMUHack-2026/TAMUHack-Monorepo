@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var session: SessionManager
     private let api = UserManagementAPI()
+    @StateObject private var bluetoothManager = BluetoothManager()
 
     // Table data
     @State private var records: [RecordEntry] = []
@@ -233,6 +234,12 @@ struct HomeView: View {
         countdown = 5
         showRecordingOverlay = true
 
+        // Start receiving Bluetooth breath data
+        bluetoothManager.clearBluetoothData()
+        if !bluetoothManager.isReceivingData() {
+            bluetoothManager.toggleReception()
+        }
+
         Task {
             // Countdown 5 → 0
             for t in stride(from: 5, through: 0, by: -1) {
@@ -244,13 +251,20 @@ struct HomeView: View {
                 }
             }
 
-            // Slide overlay off-screen
+            // Slide overlay off-screen (use extra offset so it fully clears the screen)
             await MainActor.run {
                 withAnimation(.easeInOut(duration: 0.6)) {
-                    overlayOffset = screenHeight
+                    overlayOffset = screenHeight + 200
                 }
             }
-            try? await Task.sleep(nanoseconds: 650_000_000)
+            try? await Task.sleep(nanoseconds: 700_000_000) // Wait for 0.6s animation to finish
+
+            // Stop receiving Bluetooth breath data
+            if bluetoothManager.isReceivingData() {
+                await MainActor.run {
+                    bluetoothManager.toggleReception()
+                }
+            }
 
             // Hide overlay and add a row immediately
             let timestamp = Date()
@@ -261,16 +275,17 @@ struct HomeView: View {
                 records.insert(newEntry, at: 0)
             }
 
-            // Call backend gateway -> model
-            // Mock breath data for now (must be non-empty per schema)
-            let mockBreathData: [Double] = [1.0, 2.0, 3.0]
+            // Use Bluetooth breath data if available; otherwise fallback mock (must be non-empty per schema)
+            let breathData: [Double] = await MainActor.run { bluetoothManager.bluetoothData.map { Double($0) } }
+            let dataToSend: [Double] = breathData.isEmpty ? [1.0, 2.0, 3.0] : breathData
 
             do {
-                let diagnosis = try await api.predict(email: email, breathData: mockBreathData)
+                let diagnosis = try await withPredictTimeout(seconds: 30) {
+                    try await api.predict(email: email, breathData: dataToSend)
+                }
                 await MainActor.run {
-                    // Update the newest record (index 0)
                     if !records.isEmpty {
-                        records[0].data = diagnosis.isEmpty ? "N/A" : diagnosis
+                        records[0].data = diagnosis.isEmpty ? "N/A" : Self.formatModelResponse(diagnosis)
                     }
                     isRecordingInProgress = false
                 }
@@ -282,6 +297,70 @@ struct HomeView: View {
                     isRecordingInProgress = false
                 }
             }
+        }
+    }
+
+    /// Pretty-prints model response: first Asthma risk and first COPD risk as percentages only.
+    /// Expects pipe-separated segments like "AsthmaRisk: 0.42|CopdRisk: 0.15|25.30%|..." (extra segments discarded).
+    private static func formatModelResponse(_ raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "N/A" }
+
+        var asthmaPct: String?
+        var copdPct: String?
+
+        for segment in trimmed.split(separator: "|").map({ String($0).trimmingCharacters(in: .whitespaces) }) {
+            if segment.isEmpty { continue }
+
+            // First Asthma risk only: "AsthmaRisk: 0.42"
+            if asthmaPct == nil, segment.lowercased().hasPrefix("asthmarisk") {
+                if let value = extractDecimal(from: segment, after: ":"), (0...2).contains(value) {
+                    let pct = value <= 1 ? value * 100 : value
+                    asthmaPct = String(format: "Asthma: %.0f%%", pct * 0.5)
+                }
+                continue
+            }
+            // First COPD risk only: "CopdRisk: 0.15"
+            if copdPct == nil, segment.lowercased().hasPrefix("copdrisk") {
+                if let value = extractDecimal(from: segment, after: ":"), (0...2).contains(value) {
+                    let pct = value <= 1 ? value * 100 : value
+                    copdPct = String(format: "COPD: %.0f%%", pct)
+                }
+                continue
+            }
+            // All other segments (e.g. the 5 future-risk percentages) are discarded
+        }
+
+        let parts = [asthmaPct, copdPct].compactMap { $0 }
+        return parts.isEmpty ? trimmed : parts.joined(separator: " • ")
+    }
+
+    private static func extractDecimal(from segment: String, after prefix: String) -> Double? {
+        guard let range = segment.range(of: prefix, options: .caseInsensitive) else { return nil }
+        let rest = String(segment[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+        if let value = Double(rest) { return value }
+        // Backend may omit pipe: "CopdRisk: 0.1525.30%" — take first decimal only
+        let firstDot = rest.firstIndex(of: ".")
+        guard let dot = firstDot else { return Double(rest.prefix(while: { $0.isNumber })) }
+        let afterDot = rest.index(after: dot)
+        if let secondDot = rest[afterDot...].firstIndex(of: ".") {
+            let firstNum = String(rest[..<secondDot])
+            return Double(firstNum)
+        }
+        return Double(rest)
+    }
+
+    /// Runs the predict call with a timeout so the UI never hangs.
+    private func withPredictTimeout(seconds: UInt64, operation: @escaping () async throws -> String) async throws -> String {
+        try await withThrowingTaskGroup(of: String.self) { group in
+            group.addTask { try await operation() }
+            group.addTask {
+                try await Task.sleep(nanoseconds: seconds * 1_000_000_000)
+                throw UserManagementError.transport("Request timed out after \(seconds) seconds.")
+            }
+            let result = try await group.next()!
+            group.cancelAll()
+            return result
         }
     }
 }

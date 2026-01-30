@@ -57,7 +57,7 @@ def infer(height, weight, sex, breath_data):
     #finalizing the output:
 
     asthma_string = f"AsthmaRisk: {asthma_risk}|"
-    copd_string = f"CopdRisk: {copd_prob}"
+    copd_string = f"CopdRisk: {copd_prob}|"
     copd_future = "|".join(
         f"{100 * x:.2f}%"
         for x in copd_future_risks
